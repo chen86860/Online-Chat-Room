@@ -36,24 +36,24 @@ server.on('listening', onListening);
 
 var userList = {};
 var userConut = 0;
+
 var io = require('socket.io').listen(server);
 io.on('connect', function (socket) {
+
     console.log('a new user connect');
     var socketID = socket.id;
 
     socket.on('login', function (obj) {
-        var name = obj.username;
+        socket.name = obj.username;
+
         if (!userList.hasOwnProperty(socketID)) {
-            userList[socketID] = name;
+            userList[socketID] = obj.username;
         }
 
         // 1进入
-        io.emit('users', {userList: userList, newuser: name, flag: '1'});
+        io.emit('users', {userList: userList, newuser: obj.username, flag: '1'});
         console.log(userList);
     });
-
-    // userList[userConut] = socket;
-    // io.emit('users', socket);
 
     // console.log(socket.name);
     //socket监听用户事件
@@ -67,17 +67,27 @@ io.on('connect', function (socket) {
         console.log('user disconnect');
     });
 
-
     //socket.emit,发送用户消息
     //socket is a sinlge info
     //io.emit is a global info
     socket.on('chat message', function (msg) {
         console.log(msg);
-        var mydate = new Date();
-        var time = mydate.toLocaleDateString() + " " + mydate.getHours() + ":" + mydate.getMinutes() + ":" + mydate.getSeconds();
-        msg.date = time;
-        io.emit('chatBack', msg)
-    })
+        if (msg.to == 'all') {
+            io.emit('chatBack', msg)
+        } else {
+            // io.sockets.connected[socketid].emit();
+            for (var key in userList) {
+                console.log(key + ":" + userList[key]);
+                if (userList[key] == msg.to) {
+                    socket.to(key).emit('chatBack', msg);
+                }
+                if (userList[key] == msg.username) {
+                    socket.to(key).emit('chatBack', msg);
+                }
+
+            }
+        }
+    });
 });
 
 

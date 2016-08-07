@@ -124,20 +124,13 @@
             background-color: #000;
         }
 
-        .userNew {
-            text-align: center;
-        }
-
         .userControl {
             background-color: #eaeaea;
-            /* max-width: 60%; */
-            /* display: inline-block; */
             text-align: left;
             padding: 8px 36px;
-            /* border-radius: 6px; */
             position: relative;
-            /* float: none; */
             font-size: 14px;
+            display: flex;
             word-break: break-all;
         }
 
@@ -237,6 +230,51 @@
         .loginUser {
 
         }
+
+        .userNew {
+            list-style: none;
+            word-break: break-all;
+            display: inline-block;
+            padding: 0;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .userNew > li {
+            float: left;
+            text-align: center;
+            margin: 0 5px;
+        }
+
+        .userNew > li > a {
+            padding: 4px 6px;
+            background-color: #dddddd;
+            border-radius: 3px;
+            text-decoration: underline;
+        }
+
+        .singleChat {
+            text-align: center;
+            display: block;
+            width: 100%;
+            position: absolute;
+            background-color: #eaeaea;
+            margin: 0 auto;
+            left: 0;
+            height: 32px;
+            top: 0;
+            line-height: 32px;
+        }
+
+        .singleChat > a {
+            position: relative;
+            left: 39px;
+            float: left;
+            cursor: pointer;
+            text-decoration: underline;
+
+        }
+
     </style>
 </head>
 <body>
@@ -250,19 +288,19 @@
     <p> Online chat room</p><span>--by Jack</span>
 </header>
 <div class="warp">
-
     <div class="userControl">
-        <span>online users:</span> <span class="userlist"></span>
+        <span>online users:</span>
+        <ul class="userNew"></ul>
     </div>
-    <p class="userNew"></p>
+
+
     <div class="msgContain">
         <ul class="msgContent">
-
         </ul>
     </div>
 
     <footer class="sendForm">
-        <input type="text" id="msgbox" class="sendText">
+        <input type="text" id="msgbox" class="sendText" title="all">
         <input type="button" value="Send" id="button" class="sendBtn">
     </footer>
 </div>
@@ -273,13 +311,12 @@
         warp.style.height = getWindowHeight() - 92 + 'px';
     }
 
-
     var socket = io();
-
 
     var login = document.getElementById('login');
     var msgbox = document.getElementById('msgbox');
     var username = document.getElementById('username');
+
     var list = document.getElementsByClassName('userlist')[0];
     var warp = document.getElementsByClassName('warp')[0];
 
@@ -288,14 +325,17 @@
         chatOnline();
         return true
     });
+
     function chatOnline() {
+        var to = document.getElementById('msgbox').getAttribute('title');
         if (getScrollHeight() - getWindowHeight() > 0) {
             document.body.style.height = "100%";
             warp.style.height = "100%";
         }
         socket.emit('chat message', {
             msg: msgbox.value,
-            username: username.value
+            username: username.value,
+            to: msgbox.getAttribute('title')
         });
     }
 
@@ -316,7 +356,6 @@
     socket.on('chatBack', function (msg) {
 
         var newline = document.createElement('li');
-
         var warpdiv = document.createElement('div');
         var content = document.createElement('span');
         var userprofile = document.createElement('span');
@@ -346,32 +385,63 @@
         window.scrollTo(0, getScrollHeight());
     });
 
-    var group = '';
     var userNew = document.getElementsByClassName('userNew')[0];
+    var newUser = '';
     socket.on('users', function (msg) {
                 var userList = msg.userList;
-                for (i in userList) {
-                    group += userList[i] + ",";
+                while (userNew.hasChildNodes()) {
+                    userNew.removeChild(userNew.firstChild);
                 }
-                list.innerHTML = group;
-                group = "";
 
-                var newUser = document.createElement('li');
+                for (var i in userList) {
+                    var userLi = document.createElement('li');
+                    var userLiA = document.createElement('a');
+                    if (userList[i] != username) {
+                        userLiA.setAttribute('onclick', "sendMsg('" + userList[i] + "')");
+                    }
+                    userLiA.setAttribute('alt', userList[i]);
+
+                    userLiA.innerHTML = userList[i];
+                    userLi.appendChild(userLiA);
+                    userNew.appendChild(userLi);
+
+                }
+
+                newUser = document.createElement('li');
                 var newUserspan = document.createElement('span');
                 newUser.className = 'newUser';
                 if (msg.flag == '1') {
                     newUserspan.innerHTML = "user " + msg.newuser + " in";
                 }
                 else {
-                    newUserspan.innerHTML = "user" + msg.newuser + " out";
+                    newUserspan.innerHTML = "user " + msg.newuser + " out";
                 }
-
                 newUser.appendChild(newUserspan);
                 msgContent.appendChild(newUser);
+
                 window.scrollTo(0, getScrollHeight());
             }
     );
 
+    function sendMsg(to) {
+        msgbox.setAttribute('title', to);
+        var userControl = document.getElementsByClassName('userControl')[0];
+
+        var navBar = document.createElement('p');
+        navBar.className = 'singleChat';
+        var navBarB = document.createElement('a');
+        navBarB.setAttribute('onclick', 'back()');
+        navBarB.innerHTML = 'Back';
+        navBar.appendChild(navBarB);
+        navBar.appendChild(document.createTextNode('Chat with ' + to));
+        userControl.appendChild(navBar);
+    }
+
+    function back() {
+        msgbox.setAttribute('title', 'all');
+        var singleChat = document.getElementsByClassName('singleChat')[0];
+        singleChat.remove();
+    }
 
     function getScrollTop() {
         var scrollTop = 0, bodyScrollTop = 0, documentScrollTop = 0;
