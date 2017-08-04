@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>chatRoom</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="../js/socket.io.js"></script>
+  <script src="../js/jquery.min.js"></script>
+  <script src="../js/monent.js"></script>
+  <script src="../js/vue.js"></script>
+  <link rel="stylesheet" type="text/css" href="../css/iconfont.css">
+  <link rel="stylesheet" type="text/css" href="../css/style.css">
+</head>
+
+<body>
+  <div class="chatBox">
+    <div class="chatBox-title">
+      <div class="chatBox-info">
+        <h3 class="chatBox-info-name">chatRoom</h3>
+        <input type="hidden" name="" value="{{roomId}}" id="roomId">
+      </div>
+      <div class="chatBox-switch">
+        <i class="iconfont icon-close" title="关闭"></i>
+      </div>
+    </div>
+    <div class="chatBox-content">
+      <div class="chatBox-content-main">
+        <ul class="chatBox-ul">
+        </ul>
+      </div>
+      <div class="chatBox-content-footer">
+        <div class="chatBox-textarea">
+          <span class="chatBox-icon iconfont icon-xiaolian" title="表情"></span>
+          <textarea class="textarea"></textarea>
+          <span class="chatBox-btn-send">发送</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <script src="../js/client.js"></script>
+</body>
+
+</html>
