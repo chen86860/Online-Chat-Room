@@ -1,71 +1,84 @@
-html,body{
-        margin: 0;
+html,
+body {
+    margin: 0;
     padding: 0;
     width: 100%;
     height: 100%;
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
     -webkit-box-align: center;
-        -ms-flex-align: center;
-            align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
     -webkit-box-pack: center;
-        -ms-flex-pack: center;
-            justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
 }
-ul{
+
+ul {
     padding: 0;
     margin: 0;
     overflow: auto;
     height: 100%;
 }
-ul::-webkit-scrollbar {display:none}
-input,button,select,textarea{
-    outline:none
+
+ul::-webkit-scrollbar {
+    display: none
+}
+
+input,
+button,
+select,
+textarea {
+    outline: none
 }
 
 li {
-    list-style:none
+    list-style: none
 }
 
-#input{
-    width:200
+#input {
+    width: 200
 }
-#login{
+
+#login {
     background-color: #09bb07;
     border: none;
 }
-#messages{
-    position:fixed;
-    top:40px;
-    bottom:8px;
-    left:8px;
-    right:8px;
-    border:1px solid #eee;
-    padding:8px
+
+#messages {
+    position: fixed;
+    top: 40px;
+    bottom: 8px;
+    left: 8px;
+    right: 8px;
+    border: 1px solid #eee;
+    padding: 8px
 }
-.container-w{
+
+.container-w {
     width: 300px;
     height: 500px;
 }
 
-.chatTitle{
-    text-align:center;
-    font-weight:bold;
+.chatTitle {
+    text-align: center;
+    font-weight: bold;
     color: #5f5f5f !important
 }
 
-.chatForm{
-    -webkit-box-shadow:1px 1px 10px 2px #ccc;
-            box-shadow:1px 1px 10px 2px #ccc;
-    padding:30px;
-    border-radius:6px
+.chatForm {
+    -webkit-box-shadow: 1px 1px 10px 2px #ccc;
+    box-shadow: 1px 1px 10px 2px #ccc;
+    padding: 30px;
+    border-radius: 6px
 }
 
 
 /*聊天框css*/
-.chatBox{
-         margin: 0 auto;
+
+.chatBox {
+    margin: 0 auto;
     z-index: 19891017;
     width: 100%;
     height: 100%;
@@ -73,17 +86,20 @@ li {
     min-width: 320px;
     overflow: scroll;
     border: 1px solid #D9D9D9;
-    border-color: rgba(0,0,0,.05);
-    -webkit-box-shadow: 1px 1px 50px rgba(0,0,0,.3);
-    box-shadow: 1px 1px 50px rgba(0,0,0,.3);
+    border-color: rgba(0, 0, 0, .05);
+    -webkit-box-shadow: 1px 1px 50px rgba(0, 0, 0, .3);
+    box-shadow: 1px 1px 50px rgba(0, 0, 0, .3);
     border-radius: 6px;
-    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
     position: relative;
 }
 
+
 /*title部分*/
-.chatBox-title{
-       height: 49px;
+
+.chatBox-title {
+    height: 49px;
     border-bottom: none;
     background-color: rgb(41, 41, 41);
     font-size: 14px;
@@ -97,56 +113,63 @@ li {
     z-index: 1;
 }
 
-.chatBox-title .chatBox-info{
-       display: inline-block;
+.chatBox-title .chatBox-info {
+    display: inline-block;
     /* width: 45%; */
     height: 49px;
     line-height: 20px;
 }
 
-.chatBox-title .chatBox-switch{
-        float: right;
+.chatBox-title .chatBox-switch {
+    float: right;
     font-size: 24px;
     font-weight: bold;
     position: absolute;
     left: 12px;
     top: 6px;
 }
-.chatBox-switch i{
+
+.chatBox-switch i {
     cursor: pointer
 }
 
+
 /*conten部分*/
-.chatBox-content{
-          top: 0;
+
+.chatBox-content {
+    top: 0;
     bottom: 0;
     overflow-y: scroll;
     margin: 50px 0 50px;
-    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
     width: 100%;
     max-width: 640px;
     position: absolute;
 }
 
-.chatBox-content-main{
+.chatBox-content-main {
     padding: 15px 15px 5px;
-    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
     top: 0;
     bottom: 0;
     position: absolute;
     width: 100%;
 }
 
+
 /*其他用户信息样式*/
-.chatBox-content-main li{
-       position: relative;
+
+.chatBox-content-main li {
+    position: relative;
     font-size: 0;
     margin-bottom: 10px;
-        padding-left: 55px;
+    padding-left: 55px;
     min-height: 68px;
 }
 
-.chatBox-content-main .chatRoom-user{
+.chatBox-content-main .chatRoom-user {
     position: absolute;
     left: 3px;
     display: inline-block;
@@ -154,7 +177,7 @@ li {
     font-size: 14px;
 }
 
-.chatRoom-user img{
+.chatRoom-user img {
     width: 40px;
     height: 40px;
     border-radius: 100%;
@@ -174,7 +197,7 @@ li {
     font-size: 14px;
 }
 
-.chatRoom-user-text:after{
+.chatRoom-user-text:after {
     content: '';
     position: absolute;
     left: -10px;
@@ -187,7 +210,7 @@ li {
     border-width: 10px;
 }
 
-cite{
+cite {
     position: absolute;
     left: 60px;
     top: -2px;
@@ -200,48 +223,52 @@ cite{
     font-style: normal;
 }
 
-cite i{
+cite i {
     padding-left: 15px;
     font-style: normal;
 }
 
+
 /*自己发言样式*/
-.chatRoom-me{
+
+.chatRoom-me {
     text-align: right;
     padding-left: 0;
     padding-right: 60px;
 }
 
-.chatRoom-me .chatRoom-user{
+.chatRoom-me .chatRoom-user {
     left: auto;
     right: 3px;
 }
 
-.chatRoom-me cite{
+.chatRoom-me cite {
     left: auto;
     right: 60px;
     text-align: right;
 }
 
-.chatRoom-me cite i{
+.chatRoom-me cite i {
     margin-right: 15px;
 }
 
-.chatRoom-me .chatRoom-user-text{
+.chatRoom-me .chatRoom-user-text {
     margin-left: 0;
     text-align: left;
     background-color: #09bb07;
     color: #fff;
 }
 
-.chatRoom-me .chatRoom-user-text:after{
+.chatRoom-me .chatRoom-user-text:after {
     left: auto;
     right: -10px;
     border-top-color: #09bb07;
 }
 
+
 /*通知样式*/
-li[class="chatRoom-notice"]{
+
+li[class="chatRoom-notice"] {
     text-align: center;
     padding-left: 0;
     color: #c9c9c9;
@@ -254,7 +281,7 @@ li[class="chatRoom-notice"]{
     color: #d0d0d0;
 }
 
-.chatBox-content-footer{
+.chatBox-content-footer {
     border-top: 1px solid #F1F1F1;
     height: 53px;
     display: -webkit-box;
@@ -278,7 +305,7 @@ li[class="chatRoom-notice"]{
     width: 100%;
 }
 
-.chatBox-content-footer .chatBox-toolbar{
+.chatBox-content-footer .chatBox-toolbar {
     position: relative;
     padding: 0 8px;
     height: 38px;
@@ -286,21 +313,21 @@ li[class="chatRoom-notice"]{
     font-size: 0;
 }
 
-.chatBox-content-footer .chatBox-textarea{
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
+.chatBox-content-footer .chatBox-textarea {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
     -webkit-box-align: center;
-        -ms-flex-align: center;
-            align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
     -webkit-box-pack: center;
-        -ms-flex-pack: center;
-            justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
     width: 100%;
     margin: 0 10px;
 }
 
-.chatBox-textarea textarea{
+.chatBox-textarea textarea {
     display: block;
     width: 100%;
     padding: 7px 7px 0;
@@ -315,12 +342,12 @@ li[class="chatRoom-notice"]{
     background-color: #fff;
 }
 
-.chatBox-content-footer .chatBox-bottom{
+.chatBox-content-footer .chatBox-bottom {
     position: relative;
     height: 46px;
 }
 
-.chatBox-icon{
+.chatBox-icon {
     position: relative;
     margin: 0 10px;
     display: inline-block;
@@ -329,11 +356,11 @@ li[class="chatRoom-notice"]{
     cursor: pointer;
 }
 
-.chatBox-icon:first-child{
+.chatBox-icon:first-child {
     font-size: 20px;
 }
 
-.chatBox-btn{
+.chatBox-btn {
     position: absolute;
     right: 15px;
     top: 3px;
@@ -343,7 +370,7 @@ li[class="chatRoom-notice"]{
     cursor: pointer;
 }
 
-.chatBox-btn-close{
+.chatBox-btn-close {
     display: inline-block;
     vertical-align: top;
     font-size: 14px;
@@ -355,9 +382,9 @@ li[class="chatRoom-notice"]{
     border-radius: 3px;
 }
 
-.chatBox-btn-send{
+.chatBox-btn-send {
     cursor: pointer;
-       display: inline-block;
+    display: inline-block;
     vertical-align: top;
     font-size: 14px;
     line-height: 32px;
