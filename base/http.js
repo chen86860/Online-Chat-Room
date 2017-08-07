@@ -1,19 +1,24 @@
 const http = require('http')
 const URL = require('url')
+const querystring = require('querystring')
 
 exports.get = (url, params) => {
-  if (!url) return new Error('url path is no valid')
-  url = URL.parse(url)
-  // url查询参数
-  var query = '';
-  if (params) Object.keys(params).forEach(e => { query += ('&' + e + '=' + params[e]) })
-  // 以Promise方式调用
   return new Promise((resolve, reject) => {
-    var req = http.request({
+    if (!url || typeof url !== 'string') reject(new Error('url path is no valid'))
+    url = URL.parse(url)
+    // url查询参数
+    let query = ''
+    if (params) Object.keys(params).forEach(e => { query += ('&' + e + '=' + params[e]) })
+    // 以Promise方式调用
+    let req = http.request({
       hostname: url.hostname,
       path: url.pathname + query.replace('&', '?'),
       method: 'GET',
-      host: url.host
+      host: url.host,
+      port: url.port || 80,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
     }, (res) => {
       if (res.statusCode !== 200 || res.statusCode > 300) {
         reject(new Error('Error' + res.statusMessage))
@@ -41,25 +46,32 @@ exports.get = (url, params) => {
 }
 
 exports.post = (url, params) => {
-  if (!url) return new Error('url path is no valid')
-  url = URL.parse(url)
   return new Promise((resolve, reject) => {
-    var req = http.request({
+    if (!url) reject(new Error('url is no valid'))
+    if (params) params = querystring.stringify(params)
+    url = URL.parse(url)
+    let req = http.request({
       hostname: url.hostname,
       path: url.pathname,
       method: 'POST',
-      host: url.host
-    }, (res) => {
-      if (res.code !== 200 || res.code > 300) {
-        reject(new Error('Error' + res.message))
+      host: url.host,
+      port: url.port || 80,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Length': Buffer.byteLength(params)
       }
-      let data = []
+    }, (res) => {
+      if (res.statusCode !== 200 || res.statusCode > 300) {
+        reject(new Error(res))
+      }
+      res.setEncoding('utf8');
+      let data = ''
       res.on('data', (chunk) => {
-        data.push(chunk)
+        data += chunk.toString()
       })
       res.on('end', () => {
         try {
-          data = JSON.parse(Buffer.concat(data).toString())
+          data = JSON.parse(JSON.stringify(data))
         }
         catch (e) {
           reject(e)

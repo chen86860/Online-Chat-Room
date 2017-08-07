@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "nodemon ./bin/www"
   },
   "dependencies": {
     "body-parser": "~1.17.1",
@@ -11,9 +11,9 @@
     "debug": "~2.6.3",
     "express": "~4.15.2",
     "morgan": "~1.8.1",
+    "mysql": "^2.14.1",
     "nunjucks": "^3.0.1",
     "pug": "~2.0.0-beta11",
-    "query-string": "^5.0.0",
     "request": "^2.81.0",
     "request-promise": "^4.2.1",
     "request-promise-native": "^1.0.4",
@@ -21,6 +21,7 @@
     "socket.io": "^2.0.3"
   },
   "devDependencies": {
+    "nodemon": "^1.11.0",
     "webpack": "^3.4.1"
   }
 }

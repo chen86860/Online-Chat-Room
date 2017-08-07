@@ -36,17 +36,34 @@
 //   });
 // };
 
-var $http = require('../base/http')
-var fs = require('fs')
+// var $http = require('../base/http')
+// var fs = require('fs')
 
-$http.get('http://cms.adbats.com/cms/item/search', {
-  page: 2,
-  size: 10,
-  sort: 'itemSale,desc'
-}).then((res) => {
-  console.log(JSON.parse(res).code)
-  fs.appendFileSync('result.json', res)
-  // console.log(res)
-}).catch(err => {
-  console.log('err', err)
-})
+// $http.get('http://cms.adbats.com/cms/item/search', {
+//   page: 2,
+//   size: 10,
+//   sort: 'itemSale,desc'
+// }).then((res) => {
+//   console.log(JSON.parse(res).code)
+//   fs.appendFileSync('result.json', res)
+//   // console.log(res)
+// }).catch(err => {
+//   console.log('err', err)
+// })
+
+// $http.post('http://tower.adbats.com/open/taobao/getTaokouling', {
+//   item_id: 1679193096,
+//   pid: 'mm_122396730_23766697_79224551',
+//   title: '沙发床多功能小户型可折叠沙发床70cm单人双人简易沙发布艺特价',
+//   logo: 'http://img01.taobaocdn.com/bao/uploaded/i1/T1.slAXlNxXXbqL6.9_103919.jpg',
+//   source_type: 3
+// }).then(res => {
+//   console.log(res)
+// }).catch(err => {
+//   console.log('err', err)
+// })
+
+
+const API = require('../config/host')
+
+console.log(API.getOrder)

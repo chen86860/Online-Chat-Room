@@ -2,12 +2,12 @@ var chat = {
   socket: null,
   userId: null,
   userName: null,
-  init: function(id) {
+  init: function (id) {
     this.userId = this.genUid();
-    this.userName = window.name || this.genUid();
+    this.userName = window.sessionStorage.getItem('user') || this.genUid();
     this.socket = io.connect("/" + id);
     this.socket.emit("login", { id: this.userId, name: this.userName });
-    this.socket.on("welcome", function(data) {
+    this.socket.on("welcome", function (data) {
       var ul = document.querySelector(".chatBox-ul");
       var li = document.createElement("li");
       li.classList.add("chatRoom-notice");
@@ -15,10 +15,10 @@ var chat = {
       ul.appendChild(li);
       chat.scrollToBottom();
     });
-    this.socket.on("serverMsg", function(data) {
+    this.socket.on("serverMsg", function (data) {
       chat.insertMsg(data);
     });
-    this.socket.on("logout", function(data) {
+    this.socket.on("logout", function (data) {
       var ul = document.querySelector(".chatBox-ul");
       var li = document.createElement("li");
       li.classList.add("chatRoom-notice");
@@ -27,7 +27,7 @@ var chat = {
       chat.scrollToBottom();
     });
   },
-  insertMsg: function(obj) {
+  insertMsg: function (obj) {
     var isMe = obj.id === chat.userId ? true : false;
     var ul = document.querySelector(".chatBox-ul");
     if (isMe) {
@@ -50,32 +50,61 @@ var chat = {
       ul.appendChild(li);
     } else {
       var li = document.createElement("li");
-      li.innerHTML =
-        "<div class='chatRoom-user'>" +
-        "<img src='" +
-        obj.src +
-        "'>" +
-        "<cite>" +
-        obj.name +
-        "<i>" +
-        obj.time +
-        "</i></cite>" +
-        "</div>" +
-        "<div class='chatRoom-user-text'>" +
-        obj.info +
-        "</div>";
+      li.innerHTML = `
+          <div class='chatRoom-user'>
+            <img src=${obj.src}>
+            <cite>${obj.name}<i>${obj.time}</i></cite>
+          </div>
+          <div class='chatRoom-user-text'>
+            ${obj.info}
+            <a href='${obj.cms_url}' class='link'>查看更多</a>
+          </div>
+         `
+      if (obj.cms_url) {
+        li.innerHTML = `
+         <div class='chatRoom-user'>
+            <img src=${obj.src}>
+            <cite>${obj.name}<i>${obj.time}</i></cite>
+          </div>
+          <div class='chatRoom-user-text'>
+            ${obj.info}
+            <a href='${obj.cms_url}' class='link'>查看更多</a>
+          </div>`
+      } else {
+        li.innerHTML = `
+        <div class='chatRoom-user'>
+            <img src=${obj.src}>
+            <cite>${obj.name}<i>${obj.time}</i></cite>
+          </div>
+          <div class='chatRoom-user-text'>
+            ${obj.info}
+          </div>`
+      }
+      // 增加记录
       ul.appendChild(li);
+      if (obj.img) {
+        let li = document.createElement('li')
+        li.innerHTML = `
+          <div class="chatRoom-user" >
+            <img src="${obj.src}" alt="" />
+            <cite>${obj.name}<i>${obj.time}</i></cite>
+          </div >
+          <div class="chatRoom-user-text chatRoom-img">
+            <img src="${obj.img + '_400x400q50'}" alt="" />
+          </div>`
+        ul.appendChild(li)
+      }
     }
     chat.scrollToBottom();
   },
-  sendMsg: function(info) {
+  sendMsg: function (info) {
     var info = textarea.value.trim();
     if (info) {
       var msg = {
         id: this.userId,
         name: this.userName,
         info: info,
-        time: moment().format("YYYY-MM-DD HH:mm:ss")
+        time: moment().format("M/D HH:mm:ss")
       };
       this.socket.emit("newMsg", msg);
       textarea.value = "";
@@ -84,14 +113,14 @@ var chat = {
       return;
     }
   },
-  scrollToBottom: function() {
+  scrollToBottom: function () {
     var sum = 0;
     $(".chatBox-ul li").each((i, e) => {
       sum += $(e).outerHeight();
     });
     $(".chatBox-ul").animate({ scrollTop: sum - 224 }, 100);
   },
-  genUid: function() {
+  genUid: function () {
     return new Date().getTime() + "" + Math.floor(Math.random() * 899 + 100);
   }
 };
@@ -103,10 +132,10 @@ chat.init(roomId.value);
 // 发送消息
 var sendBtn = document.querySelector(".chatBox-btn-send");
 var textarea = document.querySelector(".textarea");
-sendBtn.addEventListener("click", function() {
+sendBtn.addEventListener("click", function () {
   chat.sendMsg();
 });
-textarea.onkeydown = function(e) {
+textarea.onkeydown = function (e) {
   var e = e || window.event;
   if (e.keyCode == 13) {
     // 阻止回车换行
