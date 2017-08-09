@@ -1,6 +1,8 @@
 const host = require('./conf').host
 
-exports.getOrder = host + 'tbk_dev/chat/order/find/'
-exports.postOrder = host + 'tbk_dev/chat/order/send/'
-exports.savePost = host + 'tbk_dev/chat/record/save/'
-exports.getPost = host + 'tbk_dev/chat/record/history/'
+module.exports = {
+  getOrder: host + 'tbk_dev/chat/order/find/',
+  postOrder: host + 'tbk_dev/chat/order/send/',
+  savePost: host + 'tbk_dev/chat/record/save/',
+  getPost: host + 'tbk_dev/chat/record/history/'
+}

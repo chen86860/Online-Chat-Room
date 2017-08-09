@@ -43,8 +43,8 @@ module.exports = function (io) {
           console.log(socketObj[id].onlineUsers)
         }
         client.broadcast.emit("welcome", user);
-        client.broadcast.emit('updateCount', ++socketObj[id].onlineCount)
-        console.log(user.name + " 加入聊天室");
+        // client.broadcast.emit('updateCount', ++socketObj[id].onlineCount)
+        console.log(user.name + " 加入聊天室")
       });
       client.on("newMsg", data => {
         data.name = socketObj[id].onlineUsers[data.id]["name"]
@@ -159,7 +159,6 @@ module.exports = function (io) {
       }
     });
   }
-
   // 后台登录
   router.get('/login', (req, res) => {
     res.render('login')

@@ -9,10 +9,14 @@
 </head>
 
 <body>
-  <h1> {{message}}</h1>
-  <h2>{{error.status}}</h2>
+  <h1>
+    <%= code message %>
+  </h1>
+  <h2>
+    <%= error.status %>
+  </h2>
   <pre>
-   {{error.stack}}
+   <%= error.stack %>
   </pre>
 </body>
 

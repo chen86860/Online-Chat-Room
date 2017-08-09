@@ -162,6 +162,7 @@ li {
     margin-bottom: 10px;
     padding-left: 55px;
     min-height: 68px;
+    margin-top: 40px
 }
 
 .chatBox-content-main .chatRoom-user {
@@ -207,20 +208,36 @@ li {
 
 cite {
     position: absolute;
-    left: 60px;
+    left: 0;
     top: -2px;
-    width: 500px;
+    width: 100%;
     line-height: 24px;
     font-size: 12px;
     white-space: nowrap;
     color: #999;
-    text-align: left;
+    text-align: center;
     font-style: normal;
 }
 
 cite i {
-    padding-left: 15px;
     font-style: normal;
+    position: relative;
+    top: -23px;
+    background: #efefef;
+    border-radius: 5px;
+    padding: 2px 4px 0;
+}
+
+cite span {
+    position: absolute;
+    left: 60px;
+}
+
+.chatRoom-me cite span {
+    position: absolute;
+    width: 100px;
+    right: 30px;
+    left: unset;
 }
 
 
@@ -238,13 +255,16 @@ cite i {
 }
 
 .chatRoom-me cite {
-    left: auto;
-    right: 60px;
-    text-align: right;
+    left: 0;
+    /* right: 60px; */
+    text-align: center;
 }
 
 .chatRoom-me cite i {
-    margin-right: 15px;
+    /* margin-left: 50%;
+    position: absolute;
+    text-align: center;
+    left: 0; */
 }
 
 .chatRoom-me .chatRoom-user-text {
@@ -416,20 +436,28 @@ li[class="chatRoom-notice"] {
     bottom: 54px;
     max-width: 640px;
     background-color: #f9f9f9;
+    -webkit-box-sizing: border-box;
     box-sizing: border-box;
     border-top: 1px solid #ddd;
     border-bottom: 1px solid #ddd;
 }
 
 .facewrap ul {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
-    /* justify-content: center; */
+    -ms-flex-pack: distribute;
+    justify-content: space-around;
+    -ms-flex-wrap: wrap;
     flex-wrap: wrap;
 }
 
 .facewrap ul li {
-    padding: 6px 16px 0;
+    padding: 8px 16px 0;
+    font-size: 24px;
 }
 
 .fade-enter-active,
