@@ -5,18 +5,24 @@
   <title>chatRoom</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="js/socket.io.js"></script>
-  <script src="/js/jquery.min.js"></script>
-  <script src="js/monent.js"></script>
-  <link rel="stylesheet" type="text/css" href="css/iconfont.css">
-  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <link rel="stylesheet" type="text/css" href="../css/style.css">
+  <link rel="stylesheet" type="text/css" href="../css/iconfont.css">
+  <link href="http://cdn.staticfile.org/emoji/0.2.2/emoji.css" rel="stylesheet" type="text/css" />
+  <script src="../js/jquery.min.js"></script>
+  <script src="../js/socket.io.js"></script>
+  <script src="../js/monent.js"></script>
+  <script src="../js/vue.js"></script>
+  <script src="http://cdn.staticfile.org/emoji/0.2.2/emoji.js"></script>
 </head>
 
 <body>
-  <div class="chatBox">
+  <input type="hidden" name="" value="{{roomId}}" id="roomId">
+  <div class="chatBox" id="chat">
     <div class="chatBox-title">
       <div class="chatBox-info">
-        <h3 class="chatBox-info-name">chatRoom</h3>
+        <h3 class="chatBox-info-name">布谷鸟优惠推荐
+          <span id='count'>{{count}}</span>
+        </h3>
       </div>
       <div class="chatBox-switch">
         <i class="iconfont icon-close" title="关闭"></i>
@@ -29,15 +35,192 @@
       </div>
       <div class="chatBox-content-footer">
         <div class="chatBox-textarea">
-          <span class="chatBox-icon iconfont icon-xiaolian" title="表情"></span>
-          <textarea class="textarea"></textarea>
-          <span class="chatBox-btn-send">发送</span>
+          <span class="chatBox-icon iconfont icon-xiaolian" title="表情" @click='showPannel'></span>
+          <textarea class="textarea" v-model='textarea' @keyup.enter.stop.prevent="sendText" v-focus></textarea>
+          <span class="chatBox-btn-send" @click="sendMsg">发送</span>
         </div>
 
       </div>
+      <transition name='fade'>
+        <div class="facewrap" v-if='showEmoji'>
+          <ul>
+            <li v-for='e in emojis' :key='e.id' @click='unicon(e)' v-html='e'></li>
+          </ul>
+        </div>
+      </transition>
     </div>
   </div>
-  <script src="js/client.js"></script>
+  <script>
+    const socket = io.connect()
+
+    var face = new Vue({
+      el: '#chat',
+      data() {
+        return {
+          emojis: [],
+          roomId: '',
+          showEmoji: false,
+          userId: '',
+          userName: '',
+          textarea: '',
+          count: 0
+        }
+      },
+      created() {
+        this.roomId = document.getElementById('roomId').value;
+        (this.createMap(jEmoji.EMOJI_MAP).slice(180, 218)).forEach(e => this.emojis.push(jEmoji.unifiedToHTML(e)));
+        // 初始化
+        this.init(this.roomId)
+      },
+      methods: {
+        showPannel() {
+          this.showEmoji = !this.showEmoji
+        },
+        createMap(map) {
+          var keys = Object.keys(map);
+          keys.sort(function (a, b) {
+            return b.length - a.length;
+          });
+          return keys;
+        },
+        getCookie(name) {
+          if (!name || Object.prototype.toString.apply(name) !== '[object String]') return new Error('parm must be a string');
+          let cookieArr = {}
+          document.cookie && document.cookie.split(';').forEach(e => { e = e.replace(' ', ''); cookieArr[e.split('=')[0]] = e.split('=')[1] })
+          return cookieArr[name]
+        },
+        init(id) {
+          let self = this;
+          this.userId = this.genUid()
+          this.userName = this.getCookie('username')
+          socket.emit("login", { id: this.userId, name: this.userName });
+          socket.on("welcome", function (data) {
+            var ul = document.querySelector(".chatBox-ul");
+            var li = document.createElement("li");
+            li.classList.add("chatRoom-notice");
+            li.innerHTML = data.name + " 加入本群";
+            ul.appendChild(li);
+            self.scrollToBottom();
+          });
+
+          socket.on("serverMsg", function (data) {
+            self.insertMsg(data);
+          });
+          socket.on("logout", function (data) {
+            var ul = document.querySelector(".chatBox-ul");
+            var li = document.createElement("li");
+            li.classList.add("chatRoom-notice");
+            li.innerHTML = data.name + " 已退出";
+            ul.appendChild(li);
+            self.scrollToBottom();
+          });
+          socket.on('updateCount', (data) => {
+            this.count = parseInt(data, 10)
+          })
+        },
+        insertMsg(obj) {
+          var isMe = (obj.id === this.userId);
+          var ul = document.querySelector(".chatBox-ul")
+          if (isMe) {
+            var li = document.createElement("li");
+            li.classList.add("chatRoom-me")
+            li.innerHTML = `
+              <div class='chatRoom-user'><img src='${obj.src}' />
+                <cite><i>${obj.time}</i>${obj.name}</cite>
+              </div>
+              <div class='chatRoom-user-text'>
+              ${obj.info}
+              </div>`;
+            ul.appendChild(li);
+          } else {
+            var li = document.createElement("li")
+            li.innerHTML = `
+              <div class='chatRoom-user'>
+                <img src=${obj.src}>
+                <cite>${obj.name}<i>${obj.time}</i></cite>
+              </div>
+              <div class='chatRoom-user-text'>
+                ${obj.info}
+                <a href='${obj.cms_url}' class='link'>查看更多</a>
+              </div>`;
+
+            // 发单队列
+            if (obj.cms_url) {
+              li.innerHTML = `
+              <div class='chatRoom-user'>
+                  <img src=${obj.src}>
+                  <cite>${obj.name}<i>${obj.time}</i></cite>
+                </div>
+                <div class='chatRoom-user-text'>
+                  ${obj.info}
+                  <a href='${obj.cms_url}' class='link'>查看更多</a>
+                </div>`
+            } else {
+              li.innerHTML = `
+              <div class='chatRoom-user'>
+                  <img src=${obj.src}>
+                  <cite>${obj.name}<i>${obj.time}</i></cite>
+                </div>
+                <div class='chatRoom-user-text'>
+                  ${obj.info}
+                </div>`
+            }
+            // 增加记录
+            ul.appendChild(li)
+            // 推广图
+            if (obj.img) {
+              let li = document.createElement('li')
+              li.innerHTML = `
+                <div class="chatRoom-user" >
+                  <img src="${obj.src}" alt="" />
+                  <cite>${obj.name}<i>${obj.time}</i></cite>
+                </div >
+                <div class="chatRoom-user-text chatRoom-img">
+                  <img src="${obj.img + '_400x400q50'}" alt="" />
+                </div>`
+              ul.appendChild(li)
+            }
+          }
+          this.scrollToBottom();
+        },
+        sendText(e) {
+          e.stopPropagation()
+          e.cancelBubble = true
+          this.sendMsg()
+        },
+        sendMsg() {
+          var info = this.textarea
+          if (!info) return
+          var msg = {
+            id: this.userId,
+            info: info,
+            time: moment().format("M/D HH:mm:ss")
+          };
+          socket.emit("newMsg", msg);
+          this.textarea = ''
+        },
+        scrollToBottom() {
+          var sum = 0;
+          $(".chatBox-ul li").each((i, e) => {
+            sum += $(e).outerHeight();
+          });
+          $(".chatBox-ul").animate({ scrollTop: sum }, 100);
+        },
+        genUid() {
+          return new Date().getTime() + "" + Math.floor(Math.random() * 899 + 100);
+        }
+      },
+      directives: {
+        focus: {
+          // 当绑定元素插入到 DOM 中。
+          inserted: function (el) {
+            // 聚焦元素
+            el.focus()
+          }
+        }
+      }
+    })
+  </script>
 </body>
 
 </html>

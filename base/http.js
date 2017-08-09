@@ -62,7 +62,7 @@ exports.post = (url, params) => {
       }
     }, (res) => {
       if (res.statusCode !== 200 || res.statusCode > 300) {
-        reject(new Error(res))
+        reject(new Error(res.statusMessage))
       }
       res.setEncoding('utf8');
       let data = ''

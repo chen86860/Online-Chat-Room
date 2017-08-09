@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>登录</title>
+  <script src='../../static/lib/vue.min.js'></script>
+  <script src='../../static/lib/zepto.min.js'></script>
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-width: 400px;
+      font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, SimSun, sans-serif;
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+      font-size: 14px;
+    }
+
+    .login {
+      min-width: 400px;
+      margin: 0 auto;
+    }
+
+    .login-1-wrap,
+    .login-2-wrap {
+      width: 380px;
+      margin: 70px auto;
+      background-color: #fff;
+      box-shadow: 2px 2px 2px #ddd;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+    }
+
+    .login-1-wrap ul,
+    .login-2-wrap ul {
+      padding: 0;
+      list-style: none;
+      margin: 0 auto;
+      width: 306px;
+    }
+
+    .login-1-wrap ul li,
+    .login-2-wrap ul li {
+      margin: 3px 0 12px;
+    }
+
+    .login-1-wrap p,
+    .login-2-wrap p {
+      margin: 0
+    }
+
+    .login-1-wrap input[type='text'],
+    .login-1-wrap input[type='password'] {
+      width: 280px;
+      height: 32px;
+      border-radius: 3px;
+      border: 1px solid #c7c7c7;
+      outline: none;
+      -webkit-appearance: none;
+      font-size: 14px;
+      padding: 0 12px;
+      line-height: 32px;
+    }
+
+    .login_1,
+    .login_2 {
+      background-color: #3b9cf3;
+      border: none;
+      color: #fff;
+      -webkit-appearance: none;
+      width: 306px;
+      height: 37px;
+      cursor: pointer;
+      position: relative;
+      left: 37px;
+      border-radius: 3px;
+      font-weight: 500;
+      margin-top: 20px;
+      font-size: 14px;
+      outline: none;
+      font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, SimSun, sans-serif;
+    }
+
+    .login-1-wrap h3,
+    .login-2-wrap h3 {
+      margin: 24px 37px 24px
+    }
+
+    .input-focus {
+      border-color: #1dd892;
+      outline: none;
+      box-shadow: 0 0 5px #1dd892;
+    }
+
+    .fade-enter-active,
+    .fade-leave-active {
+      -webkit-transition: all .5s ease-out;
+      transition: all .5s ease-out
+    }
+
+    .fade-enter,
+    .fade-leave-to {
+      -webkit-transform: translateY(-30px);
+      transform: translateY(-30px);
+      opacity: 0;
+    }
+
+    .country-enter-active,
+    .country-leave-active {
+      -webkit-transition: all 200ms ease-out;
+      transition: all 200ms ease-out
+    }
+
+    .country-enter,
+    .country-leave-to {
+      -webkit-transform: translateY(-20px);
+      transform: translateY(-20px);
+      opacity: 0;
+    }
+
+
+
+    .login-btn-wrap {
+      padding-bottom: 40px;
+    }
+
+    .check-wrap {
+      font-size: 14px !important
+    }
+
+    .check-wrap span a {
+      text-decoration: none;
+      color: #3b9cf3;
+    }
+
+    .compeleted {
+      font-weight: 400;
+      position: fixed;
+      text-align: center;
+      margin: 0 auto;
+      width: 100%;
+      min-width: 400px;
+      top: 0;
+      color: #fff;
+      display: inline-block;
+    }
+
+    .compeleted h3 {
+      color: #f00;
+      font-size: 14px;
+      color: #fff;
+      margin: 0;
+      width: 382px;
+      background-color: #8BC34A;
+      margin: 0 auto;
+      height: 30px;
+      display: inline-block;
+      line-height: 30px;
+      font-weight: 600;
+    }
+
+    .compeleted h3:last-child {
+      background-color: #f44336;
+    }
+
+    .login-1-wrap ul li label p:last-child {
+      font-size: 12px;
+      color: #333;
+    }
+
+    .mobile {
+      position: relative;
+    }
+
+    .mobile input {
+      padding-left: 64px !important;
+      font-weight: 600;
+      width: 228px !important;
+    }
+
+    .flag-sw {
+      position: absolute;
+      top: 27px;
+      width: 68px;
+      left: 3px;
+      line-height: 6px;
+      font-weight: 500;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-align: center;
+      -ms-flex-align: center;
+      align-items: center;
+      -webkit-box-pack: center;
+      -ms-flex-pack: center;
+      justify-content: center
+    }
+
+    .valite-ok {
+      font-size: 12px !important;
+      color: #4caf50 !important;
+    }
+
+    .mm {
+      font-size: 12px !important;
+    }
+  </style>
+</head>
+
+<body>
+  <div id='login' class="login">
+    <transition name='fade'>
+      <div class="compeleted" v-if='isFinised'>
+        <h3 v-else>
+          {{info}}
+        </h3>
+      </div>
+    </transition>
+    <div class="login-1-wrap">
+      <h3>登录</h3>
+      <ul>
+        <li class="password"><label for="">
+                        <p>登录名</p><input type="password" v-model='tbk_password' required>
+                        <p v-if='!passwordOK'>{{tips.password}}</p>
+                        <p v-else class='valite-ok'>密码OK</p>
+                    </label></li>
+        <li><label for="">
+                     <p>登录密码</p><input type="text" v-model='mama_login_name' required>
+                     <p v-if='!username_OK'>{{tips.username}}</p>
+                     <p v-else class='valite-ok'>联盟账户OK</p>
+                    </label></li>
+      </ul>
+      <p class="login-btn-wrap">
+        <button @click="!isFinised && login()" class="login_1">登录</button>
+      </p>
+    </div>
+  </div>
+  <script>
+    // const httpUrl = 'http://dev.adbats.com/tbk_dev'
+    const httpUrl = 'http://cps.adbats.com/tbk_dev'
+    var login = new Vue({
+      el: '#login',
+      data: function data() {
+        return {
+          tbk_login_name: '',
+          tbk_password: '',
+          mama_login_name: '',
+          pid: '',
+          timestamp: 3,
+          isFinised: false,
+          isSelect: false,
+          tips: {
+            username: '登录联盟后台的淘宝账户，用于获取淘宝客的授权',
+            password: '联盟账户下任意一个PID，用于验证淘宝客的授权'
+          },
+          isSucceed: false,
+          info: '',
+          isMobile: false
+
+        };
+      },
+      mounted: function mounted() {
+        if (this.getUA() != 'pc') this.isMobile = true;
+      },
+
+      computed: {
+        username_OK: function username_OK() {
+          return this.mama_login_name.length > 0;
+        },
+        password_OK: function password_OK() {
+          return this.pid.length > 0 && /^mm(_\d+){3}$/.test(this.pid);
+        }
+      },
+      methods: {
+        getUA: function getUA() {
+          var ua = window.navigator.userAgent;
+          if (ua.match(/iphone/ig)) return 'ios';
+          if (ua.match(/android/ig)) return 'android';
+          return 'pc';
+        },
+        login: function login() {
+          var self = this;
+          if (!self.mobileOK) {
+            alert('请输入正确格式的手机号');
+            // self.tips.mobile = '请输入正确格式的手机号';
+            return;
+          }
+          if (!self.passwordOK) {
+            alert('请输入正确格式的密码');
+            // self.tips.password = '请输入正确格式的密码'; 
+            return;
+          }
+          if (!self.username_OK) {
+            // self.tips.username = '请输入正确格式的联盟账户'; 
+            alert('请输入正确格式的联盟账户');
+            return;
+          }
+          if (!self.password_OK) {
+            alert('请输入正确格式的联盟PID');
+            // self.tips.password = '请输入正确格式的联盟PID';
+            return;
+          }
+          var tbk_login_name = self.tbk_login_name.replace(/ /g, '');
+          $.ajax({
+            url: httpUrl + '/tbkAuth/loginister',
+            type: 'post',
+            data: {
+              tbk_login_name: tbk_login_name,
+              tbk_password: self.tbk_password,
+              mama_login_name: self.mama_login_name,
+              pid: self.pid
+            },
+            success: function success(res) {
+              if (res.code == '200') {
+                if (self.isMobile) {
+                  alert('登录成功！');
+                  window.location.href = 'http://service.adbats.com/RobotSend/admin/page/login.html';
+                } else {
+
+                  self.isSucceed = true;
+                  self.isFinised = true;
+                  timer = setInterval(function () {
+                    if (--self.timestamp == 0) {
+                      clearInterval(timer);
+                      window.location.href = 'http://service.adbats.com/RobotSend/admin/page/login.html';
+                    }
+                  }, 1000);
+                }
+              } else {
+                if (self.isMobile) {
+                  alert(res.message);
+                } else {
+                  self.isFinised = true;
+                  self.info = res.message;
+                  setTimeout(function () {
+                    self.isFinised = false;
+                  }, 1000 * 3);
+                }
+              }
+            },
+            error: function error(err) {
+              if (self.isMobile) {
+                alert(res.message);
+              } else {
+                self.isFinised = true;
+                self.info = res.message;
+                setTimeout(function () {
+                  self.isFinised = false;
+                }, 1000 * 3);
+              }
+            }
+          });
+        }
+      },
+      watch: {
+        tbk_login_name: function tbk_login_name(oV, nV) {
+          if (nV.length < oV.length && nV.length == 2) {
+            this.tbk_login_name += ' ';
+          }
+          if (nV.length < oV.length && nV.length == 7) {
+            this.tbk_login_name += ' ';
+          }
+          if (nV.length == 11) return false;
+        }
+      }
+    });
+  </script>
+</body>
+
+</html>

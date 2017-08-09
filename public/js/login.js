@@ -5,10 +5,8 @@
   var login = function () {
     if (!document.querySelector("#userName").value) return;
     var userName = getDom("userName").value;
-    window.sessionStorage.setItem('user', userName)
-    // window.document.cookie = `user=${userName};path=/`
-    // window.name = userName;
-    window.location = "./chat/" + Math.ceil(new Date().getTime() / 100000)
+    window.document.cookie = `username=${userName};path=/;domain=${window.location.hostname}`
+    window.location = "./chat/" + Math.ceil(new Date().getTime() / 1000000)
   };
   getDom("login").addEventListener("click", login);
   getDom("userName").onkeydown = function (e) {

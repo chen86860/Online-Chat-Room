@@ -1,11 +1,19 @@
+
+let getCookie = (name) => {
+  if (!name || Object.prototype.toString.apply(name) !== '[object String]') return new Error('parm must be a string');
+  let cookieArr = {}
+  document.cookie && document.cookie.split(';').forEach(e => { e = e.replace(' ', ''); cookieArr[e.split('=')[0]] = e.split('=')[1] })
+  return cookieArr[name]
+}
+
 var chat = {
   socket: null,
   userId: null,
   userName: null,
   init: function (id) {
     this.userId = this.genUid();
-    this.userName = window.sessionStorage.getItem('user') || this.genUid();
-    this.socket = io.connect("/" + id);
+    this.userName = getCookie('username')
+    this.socket = io.connect();
     this.socket.emit("login", { id: this.userId, name: this.userName });
     this.socket.on("welcome", function (data) {
       var ul = document.querySelector(".chatBox-ul");
@@ -15,6 +23,7 @@ var chat = {
       ul.appendChild(li);
       chat.scrollToBottom();
     });
+
     this.socket.on("serverMsg", function (data) {
       chat.insertMsg(data);
     });
@@ -26,6 +35,9 @@ var chat = {
       ul.appendChild(li);
       chat.scrollToBottom();
     });
+    this.socket.on('updateCount', (data) => {
+      document.getElementById('count').innerText = parseInt(data, 10)
+    })
   },
   insertMsg: function (obj) {
     var isMe = obj.id === chat.userId ? true : false;
@@ -82,6 +94,7 @@ var chat = {
       }
       // 增加记录
       ul.appendChild(li);
+      // 推广图
       if (obj.img) {
         let li = document.createElement('li')
         li.innerHTML = `
@@ -102,7 +115,6 @@ var chat = {
     if (info) {
       var msg = {
         id: this.userId,
-        name: this.userName,
         info: info,
         time: moment().format("M/D HH:mm:ss")
       };
@@ -118,7 +130,7 @@ var chat = {
     $(".chatBox-ul li").each((i, e) => {
       sum += $(e).outerHeight();
     });
-    $(".chatBox-ul").animate({ scrollTop: sum - 224 }, 100);
+    $(".chatBox-ul").animate({ scrollTop: sum }, 100);
   },
   genUid: function () {
     return new Date().getTime() + "" + Math.floor(Math.random() * 899 + 100);

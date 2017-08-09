@@ -6,9 +6,8 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var nunjucks = require('nunjucks')
 
-
 var socket_io = require('socket.io')
-var io = socket_io()
+var io = socket_io({ transports: ['websocket'], upgrade: false })
 var app = express();
 app.io = io;
 

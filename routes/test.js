@@ -63,7 +63,11 @@
 //   console.log('err', err)
 // })
 
-
-const API = require('../config/host')
-
-console.log(API.getOrder)
+const dbHandler = require('../base/mysql')
+dbHandler.query(`insert into user(username,password) values('i * i','i * i * i')`, (err, res, fields) => {
+  if (err) {
+    console.log(res)
+  } else {
+    console.log(res.affectedRows === 1)
+  }
+})
