@@ -385,8 +385,12 @@
                 self.page++;
                 self.isEnd = (res.data.currentPage === res.data.totalPage)
               }
+              self.pull = 0;
+              self.refresh.tip = '加载中'
             },
             error(err) {
+              self.pull = 0;
+              self.refresh.tip = '加载中'
             }
           })
         },
@@ -395,26 +399,42 @@
           var _content = document.querySelector(dom)
           var _start = 0;
           var _end = 0;
+          var _toTop = 0;
+          _content.addEventListener('scroll', (e) => {
+            _toTop = e.target.scrollTop
+          });
           _content.addEventListener('touchstart', (e) => {
-            let touch = e.targetTouches[0]
-            
-            _start = (dir === 'x') ? touch.pageX : touch.pageY
-          }, false)
-          _content.addEventListener('touchmove', (e) => {
-            let touch = e.targetTouches[0]
-            _end = (dir === 'x') ? (_start - touch.pageX) : (_start - touch.pageY)
-            self.pull = 20 - _end
-            if (_end < 0) {
-              self.refresh.tip = '释放后刷新'
+            if (_toTop < 10 && self.page > 1) {
+              let touch = e.targetTouches[0]
+              _start = (dir === 'x') ? touch.pageX : touch.pageY
             }
           }, false)
+
+          _content.addEventListener('touchmove', (e) => {
+            if (_toTop < 10 && self.page > 1) {
+              let touch = e.targetTouches[0]
+              e.preventDefault()
+              e.stopPropagation()
+              _end = (dir === 'x') ? (_start - touch.pageX) : (_start - touch.pageY)
+              if (_end > 100) {
+                _content.removeEventListener('touchmove')
+              }
+              self.pull = 20 - _end
+              if (_end < 0) {
+                self.refresh.tip = '释放后刷新'
+              }
+            }
+          }, false)
+
           _content.addEventListener('touchend', (e) => {
-            if (_end > 0) {
-              console.log("左滑或上滑" + _end);
-            } else {
-              self.refresh.tip = '正在刷新...'
-              // self.pull = 50
-              self.getHistory()
+            if (_toTop < 10 && self.page > 1) {
+              if (_end > 0) {
+                console.log("左滑或上滑" + _end);
+              } else {
+                self.refresh.tip = '正在刷新...'
+                // self.pull = 50
+                self.getHistory()
+              }
             }
           }, false)
         }
