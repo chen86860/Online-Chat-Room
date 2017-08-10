@@ -6,9 +6,8 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var nunjucks = require('nunjucks')
 
-
 var socket_io = require('socket.io')
-var io = socket_io()
+var io = socket_io({ transports: ['websocket'], upgrade: false })
 var app = express();
 app.io = io;
 
@@ -17,12 +16,15 @@ var users = require('./routes/users');
 var chat = require('./routes/chat')(io)
 // view engine setup
 
-nunjucks.configure('views', {
-  autoescape: true,
-  express: app
-});
+// nunjucks.configure('views', {
+//   autoescape: true,
+//   express: app
+// });
+// app.set('view engine', 'html');
 app.set('views', path.join(__dirname, 'views'));
+app.engine('.html', require('ejs').__express);
 app.set('view engine', 'html');
+// app.set('views', path.join(__dirname, 'views'));
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
