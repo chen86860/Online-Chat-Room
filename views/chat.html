@@ -44,7 +44,7 @@
       <div class="chatBox-content">
         <div class="chatBox-content-main">
           <ul class="chatBox-ul">
-            <li v-for='item in messages' :key="item.id" :class="{'chatRoom-notice': item.type==3,'chatRoom-me': item.type==1}">
+            <li v-for='item in messages' :key="item.time" :class="{'chatRoom-notice': item.type==3,'chatRoom-me': item.type==1}">
               <template v-if='item.type==1'>
                 <cite>
                   <i>{{item.time}}</i>
@@ -233,7 +233,8 @@
         this.roomId = document.getElementById('roomId').value;
         // 初始化
         this.init(this.roomId)
-        this.initscroll()
+        // this.initscroll()
+        this.getHistory()
         this.downRefresh('.chatBox-content', 'y')
       },
       methods: {
@@ -367,6 +368,7 @@
             url: `./history/${self.page}/${self.size}`,
             method: 'get',
             success(res) {
+              let _old = $('.chatBox-content-main').outerHeight()
               if (res.code === 200) {
                 console.log('Get Page :', self.page)
                 res.data.listData.forEach(e => {
@@ -379,6 +381,9 @@
                     info: (e.content_type == 1) ? e.content : '',
                   })
                 })
+                setTimeout(function () {
+                  $('.chatBox-content').scrollTop($('.chatBox-content-main').outerHeight() - _old)
+                }, 0)
                 self.pull = 0;
                 self.refresh.tip = '加载中'
                 self.isLock = false
