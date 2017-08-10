@@ -10,6 +10,28 @@ let socketObj = {}
 let noop = () => { }
 
 module.exports = function (io) {
+  router.get("/history/:page/:size", (req, res) => {
+    console.log(req.params)
+    if (req.params.page && req.params.size) {
+      $http.get(API.getPost + '46010194', {
+        page: req.params.page,
+        size: req.params.size
+      }).then(resu => {
+        resu = JSON.parse(resu)
+        res.json(resu)
+      }).catch(err => {
+        res.json({
+          code: 206,
+          data: err
+        })
+      })
+    } else {
+      res.json({
+        code: 207,
+        data: 'params is not fixed'
+      })
+    }
+  })
   router.get("/:id", (req, res) => {
     if (req.cookies.username) {
       if (!socketArr.includes(req.params.id)) {
@@ -90,7 +112,7 @@ module.exports = function (io) {
               user_id: res.id,
               nickname: res.name,
               head_portrait: '',
-              content: res.info,
+              content: res.info + `<br ><a href="${res.cms_url}">${res.cms_url}</a>`,
               content_type: 1
             }).then(() => {
               console.log('OK')
@@ -148,10 +170,11 @@ module.exports = function (io) {
             }
             res.src = "../img/me.jpg"
             res.id = 10000;
-            res.name = '发单机器人'
+            res.name = '定时发单机器人'
             res.time = new Date()
             client.broadcast.emit('serverMsg', res)
             client.emit('serverMsg', res)
+            console.log('[', new Date(), ']', '定时发单成功')
           }).catch((err) => {
             console.log('[', new Date(), ']', '定时发单失败,err', err)
           })
@@ -159,6 +182,8 @@ module.exports = function (io) {
       }
     });
   }
+
+
   // 后台登录
   router.get('/login', (req, res) => {
     res.render('login')
@@ -173,3 +198,10 @@ module.exports = function (io) {
 
   return router;
 };
+
+
+// // sleep sort
+// let nums = [2, 4, 6, 17, 130, 1100]
+// nums.forEach(num => {
+//   setTimeout(() => { console.log(num) }, num)
+// })

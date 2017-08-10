@@ -2,23 +2,36 @@
 <html lang="en">
 
 <head>
-  <title>chatRoom</title>
+  <title>布谷鸟优惠推荐</title>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, height=device-height, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
   <link rel="stylesheet" type="text/css" href="../css/style.css">
   <link rel="stylesheet" type="text/css" href="../css/iconfont.css">
-  <link href="http://cdn.staticfile.org/emoji/0.2.2/emoji.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" type="text/css" href="../css/dropload.css">
+  <meta name="full-screen" content="yes">
+  <meta name="x5-fullscreen" content="true">
   <script src="../lib/jquery.min.js"></script>
   <script src="../lib/socket.io.js"></script>
   <script src="../lib/monent.js"></script>
+  <script src="../lib/dropload.min.js"></script>
   <script src="../lib/vue.js"></script>
-  <script src="http://cdn.staticfile.org/emoji/0.2.2/emoji.js"></script>
+  <style>
+    body {
+      overflow: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+    }
+  </style>
 </head>
 
 <body>
   <input type="hidden" name="" value="<%= roomId %>" id="roomId">
-  <div class="chatBox" id="chat">
-    <div class="chatBox-title">
+  <div id="chat">
+    <div :style="{height: pull + 'px',display:pull==0 ? 'none' : 'flex'}" class="refresh">
+      <p>{{refresh.tip}}</p>
+    </div>
+
+    <div class="chatBox">
+      <!-- <div class="chatBox-title">
       <div class="chatBox-info">
         <h3 class="chatBox-info-name">布谷鸟优惠推荐
           <span id='count'>({{count}})</span>
@@ -27,64 +40,64 @@
       <div class="chatBox-switch">
         <i class="iconfont icon-close" title="关闭"></i>
       </div>
-    </div>
-    <div class="chatBox-content">
-      <div class="chatBox-content-main">
-        <ul class="chatBox-ul">
-          <li v-for='item in messages' :key="item.id" :class="{'chatRoom-notice': item.type==3,'chatRoom-me': item.type==1}">
-            <template v-if='item.type==1'>
-              <cite>
+    </div> -->
+      <div class="chatBox-content">
+        <div class="chatBox-content-main">
+          <ul class="chatBox-ul">
+            <li v-for='item in messages' :key="item.id" :class="{'chatRoom-notice': item.type==3,'chatRoom-me': item.type==1}">
+              <template v-if='item.type==1'>
+                <cite>
                   <i>{{item.time}}</i>
                   <span>
                    {{item.name}}
                 </span> 
                 </cite>
-              <div class='chatRoom-user'><img :src='item.src' />
+                <div class='chatRoom-user'><img :src='item.src' />
 
-              </div>
-              <div class='chatRoom-user-text'>
-                {{item.info}}
-              </div>
-            </template>
-            <template v-if='item.type==2'>
-              <cite>
+                </div>
+                <div class='chatRoom-user-text'>
+                  {{item.info}}
+                </div>
+              </template>
+              <template v-if='item.type==2'>
+                <cite>
                   <span>{{item.name}}</span>
                   <i>{{item.time}}</i>
                 </cite>
-              <div class='chatRoom-user'><img :src='item.src' />
-              </div>
-              <div class='chatRoom-user-text' v-if='item.info' v-html='item.info'></div>
-              <div class="chatRoom-user-text chatRoom-img" v-if='item.img'>
-                <img :src="item.img + '_400x400q50'" alt="" />
-              </div>
-            </template>
-            <template v-if='item.type==3'>
-              {{item.info}}
-            </template>
-          </li>
-        </ul>
-      </div>
-      <div class="chatBox-content-footer">
-        <div class="chatBox-textarea">
-          <span class="chatBox-icon iconfont icon-xiaolian" title="表情" @click='showPannel'></span>
-          <textarea class="textarea" v-model='textarea' @keyup.enter.stop.prevent="sendText" v-focus></textarea>
-          <span class="chatBox-btn-send" @click="sendMsg">发送</span>
-        </div>
-
-      </div>
-      <transition name='fade'>
-        <div class="facewrap" v-if='showEmoji'>
-          <ul>
-            <li v-for='e in emojis' :key='e.id' @click='selectE(e)' v-html="'&#x' + e.code + ';'"></li>
+                <div class='chatRoom-user'><img :src='item.src' />
+                </div>
+                <div class='chatRoom-user-text' v-if='item.info' v-html='item.info'></div>
+                <div class="chatRoom-user-text chatRoom-img" v-if='item.img'>
+                  <img :src="item.img + '_400x400q50'" alt="" />
+                </div>
+              </template>
+              <template v-if='item.type==3'>
+                {{item.info}}
+              </template>
+            </li>
           </ul>
         </div>
-      </transition>
+        <div class="chatBox-content-footer">
+          <div class="chatBox-textarea">
+            <span class="chatBox-icon iconfont icon-xiaolian" title="表情" @click='showPannel'></span>
+            <textarea class="textarea" v-model='textarea' @keyup.enter.stop.prevent="sendText" v-focus></textarea>
+            <span class="chatBox-btn-send" @click="sendMsg">发送</span>
+          </div>
+
+        </div>
+        <transition name='fade'>
+          <div class="facewrap" v-if='showEmoji'>
+            <ul>
+              <li v-for='e in emojis' :key='e.id' @click='selectE(e)' v-html="'&#x' + e.code + ';'"></li>
+            </ul>
+          </div>
+        </transition>
+      </div>
     </div>
   </div>
   <script>
     const socket = io.connect()
-
-    var face = new Vue({
+    var chat = new Vue({
       el: '#chat',
       data() {
         return {
@@ -204,14 +217,24 @@
           userName: '',
           textarea: '',
           count: 0,
-          messages: []
+          messages: [],
+          page: 1,
+          size: 10,
+          isEnd: false,
+          isLock: false,
+          refresh: {
+            tip: '加载中',
+            type: 1
+          },
+          pull: 0
         }
       },
-      created() {
+      mounted() {
         this.roomId = document.getElementById('roomId').value;
-        // (this.createMap(jEmoji.EMOJI_MAP).slice(180, 218)).forEach(e => this.emojis.push(jEmoji.unifiedToHTML(e)));
         // 初始化
         this.init(this.roomId)
+        this.initscroll()
+        this.downRefresh('.chatBox-content', 'y')
       },
       methods: {
         showPannel() {
@@ -226,6 +249,11 @@
           let cookieArr = {}
           document.cookie && document.cookie.split(';').forEach(e => { e = e.replace(' ', ''); cookieArr[e.split('=')[0]] = e.split('=')[1] })
           return cookieArr[name]
+        },
+        dateFormat(ms) {
+          var prefix = (s) => s < 10 ? '0' + s : s
+          var date = new Date(ms)
+          return (date.getMonth() + 1) + '-' + date.getDate() + ' ' + prefix(date.getHours()) + ':' + prefix(date.getMinutes())
         },
         init(id) {
           let self = this;
@@ -304,15 +332,91 @@
           socket.emit('newMsg', msg);
           this.textarea = ''
         },
-        scrollToBottom() {
-          var sum = 0;
-          $(".chatBox-ul li").each((i, e) => {
-            sum += $(e).outerHeight();
+        initscroll() {
+          var self = this
+          self.getHistory();
+          var _old = 0
+          var distance = 50
+          document.querySelector('.chatBox-ul').addEventListener('scroll', e => {
+            if (e.target.scrollTop < 200 && !self.isLock) {
+              self.getHistory();
+            }
+            _old = e.target.scrollTop
           });
-          $(".chatBox-ul").animate({ scrollTop: sum }, 100, 'easeInQuint');
+          setTimeout(function () {
+            self.scrollToBottom()
+          }, 50)
+        },
+        scrollToBottom() {
+          // var sum = 0;
+          // $(".chatBox-ul li").each((i, e) => {
+          //   sum += $(e).outerHeight() + 50;
+          // });
+          $(".chatBox-content").animate({ scrollTop: $('.chatBox-content-main').outerHeight() }, 100, 'easeInQuint');
         },
         genUid() {
           return new Date().getTime() + "" + Math.floor(Math.random() * 899 + 100);
+          window.addEventListener('scroll', (e) => { if (document.querySelector('.chatBox-ul').scrollTop < 300) { console.log(1) } })
+        },
+        getHistory() {
+          let self = this
+          if (self.isEnd) return
+          if (self.isLock) return
+          self.isLock = true
+          $.ajax({
+            url: `./history/${self.page}/${self.size}`,
+            method: 'get',
+            success(res) {
+              if (res.code === 200) {
+                console.log('Get Page :', self.page)
+                res.data.listData.forEach(e => {
+                  self.messages.unshift({
+                    type: e.content_type,
+                    img: (e.content_type == 2) ? e.content : '',
+                    src: e.head_portrait,
+                    time: self.dateFormat(e.send_time),
+                    name: e.nickname || '',
+                    info: (e.content_type == 1) ? e.content : '',
+                  })
+                })
+                self.pull = 0;
+                self.refresh.tip = '加载中'
+                self.isLock = false
+                self.page++;
+                self.isEnd = (res.data.currentPage === res.data.totalPage)
+              }
+            },
+            error(err) {
+            }
+          })
+        },
+        downRefresh(dom, dir) {
+          var self = this
+          var _content = document.querySelector(dom)
+          var _start = 0;
+          var _end = 0;
+          _content.addEventListener('touchstart', (e) => {
+            let touch = e.targetTouches[0]
+            
+            _start = (dir === 'x') ? touch.pageX : touch.pageY
+          }, false)
+          _content.addEventListener('touchmove', (e) => {
+            let touch = e.targetTouches[0]
+            _end = (dir === 'x') ? (_start - touch.pageX) : (_start - touch.pageY)
+            self.pull = 20 - _end
+            if (_end < 0) {
+              self.refresh.tip = '释放后刷新'
+            }
+          }, false)
+          _content.addEventListener('touchend', (e) => {
+            if (_end > 0) {
+              console.log("左滑或上滑" + _end);
+            } else {
+              self.refresh.tip = '正在刷新...'
+              // self.pull = 50
+              self.getHistory()
+            }
+          }, false)
         }
       },
       directives: {
