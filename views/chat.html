@@ -242,7 +242,6 @@
         },
         init: function init(id) {
           var self = this;
-          this.avatar = self.avatar;
           socket.emit("login", {
             id: self.user_id,
             name: self.nickname,
@@ -317,7 +316,9 @@
           var msg = {
             id: self.user_id,
             info: self.textarea,
-            time: moment().format('M/D HH:mm:ss')
+            time: moment().format('M/D HH:mm:ss'),
+            name: self.nickname,
+            src: self.avatar
           };
           socket.emit('newMsg', msg);
           self.textarea = '';
