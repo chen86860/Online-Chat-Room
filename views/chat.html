@@ -316,14 +316,15 @@
           this.sendMsg();
         },
         sendMsg: function sendMsg() {
-          if (!this.textarea) return;
+          var self = this
+          if (!self.textarea) return;
           var msg = {
-            id: this.user_id,
-            info: this.textarea,
+            id: self.user_id,
+            info: self.textarea,
             time: moment().format('M/D HH:mm:ss')
           };
           socket.emit('newMsg', msg);
-          this.textarea = '';
+          self.textarea = '';
         },
         initscroll: function initscroll() {
           var self = this;
