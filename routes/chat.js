@@ -91,7 +91,7 @@ module.exports = function (io) {
           $http.post(API.savePost + id, {
             user_id: data.id,
             nickname: data.username,
-            head_portrait: '',
+            head_portrait: data.src,
             content: data.info,
             content_type: data.type || 1
           }).then(() => {
@@ -124,7 +124,7 @@ module.exports = function (io) {
               $http.post(API.savePost + id, {
                 user_id: res.id,
                 nickname: res.name,
-                head_portrait: '',
+                head_portrait: res.src || '',
                 content: res.info + `<br ><a href="${res.cms_url}">${res.cms_url}</a>`,
                 content_type: 1
               }).then(() => {
