@@ -33,6 +33,7 @@ module.exports = function (io) {
     }
   })
   router.get("/room", (req, res) => {
+    console.log(req.query)
     if (req.query.group_id && req.query.nickname && req.query.user_id && req.query.avatar) {
       if (!socketArr.includes(req.query.group_id)) createSocket(req.query.group_id)
       res.render("chat", {
