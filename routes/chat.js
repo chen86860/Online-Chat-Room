@@ -37,8 +37,8 @@ module.exports = function (io) {
       if (!socketArr.includes(req.query.group_id)) createSocket(req.query.group_id)
       res.render("chat", {
         group_id: req.query.group_id,
-        user_id: req.user_id,
-        nickname: req.nickname,
+        user_id: req.query.user_id,
+        nickname: req.query.nickname,
         avatar: req.query.avatar
       })
     } else {
