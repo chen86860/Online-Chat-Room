@@ -190,8 +190,6 @@
           nickname: '',
           avatar: '',
           showEmoji: false,
-          userId: '',
-          userName: '',
           textarea: '',
           count: 0,
           messages: [],
@@ -210,7 +208,7 @@
       mounted: function mounted() {
         this.group_id = document.getElementById('group_id').value;
         this.user_id = document.getElementById('user_id').value;
-        this.userName = document.getElementById('nickname').value;
+        this.nickname = document.getElementById('nickname').value;
         this.avatar = document.getElementById('avatar').value;
         // 初始化
         this.init(this.group_id);
@@ -244,8 +242,6 @@
         },
         init: function init(id) {
           var self = this;
-          this.userId = self.user_id;
-          this.userName = self.nickname;
           this.avatar = self.avatar;
           socket.emit("login", {
             id: self.user_id,
