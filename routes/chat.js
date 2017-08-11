@@ -82,10 +82,11 @@ module.exports = function (io) {
           console.log(user.name + " 加入聊天室")
         });
         client.on("newMsg", data => {
-          data.name = socketObj[id].onlineUsers[data.id]["name"]
-          data.src = socketObj[id].onlineUsers[data.id]["src"]
+          data.name = socketObj[id].onlineUsers[data.id]["name"] || ''
+          data.src = socketObj[id].onlineUsers[data.id]["src"] || ''
           client.emit("serverMsg", data);
           client.broadcast.emit("serverMsg", data);
+          console.log('___new Msg__', data)
 
           // 保存发单关键词或聊天记录
           $http.post(API.savePost + id, {
