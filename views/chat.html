@@ -316,10 +316,9 @@
           this.sendMsg();
         },
         sendMsg: function sendMsg() {
-          var self = this
           if (!this.textarea) return;
           var msg = {
-            id: self.user_id,
+            id: this.user_id,
             info: this.textarea,
             time: moment().format('M/D HH:mm:ss')
           };
