@@ -275,7 +275,7 @@
           });
         },
         insertMsg: function insertMsg(obj) {
-          var isMe = obj.id === this.userId;
+          var isMe = obj.id === self.user_id;
           if (isMe) {
             this.messages.push({
               type: 1,
