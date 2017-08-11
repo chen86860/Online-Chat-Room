@@ -248,9 +248,9 @@
           this.userName = self.nickname;
           this.avatar = self.avatar;
           socket.emit("login", {
-            id: this.userId,
-            name: this.userName,
-            avatar: this.avatar
+            id: self.user_id,
+            name: self.nickname,
+            avatar: self.avatar
           });
           socket.on("welcome", function (data) {
             self.messages.push({
