@@ -75,7 +75,6 @@ module.exports = function (io) {
               name: user.name,
               src: user.avatar
             };
-            console.log(socketObj[id].onlineUsers)
           }
           client.broadcast.emit("welcome", user);
           // client.broadcast.emit('updateCount', ++socketObj[id].onlineCount)

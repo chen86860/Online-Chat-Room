@@ -275,6 +275,7 @@
           });
         },
         insertMsg: function insertMsg(obj) {
+          var self = this;
           var isMe = obj.id === self.user_id;
           if (isMe) {
             this.messages.push({
@@ -315,6 +316,7 @@
           this.sendMsg();
         },
         sendMsg: function sendMsg() {
+          var self = this
           if (!this.textarea) return;
           var msg = {
             id: self.user_id,
