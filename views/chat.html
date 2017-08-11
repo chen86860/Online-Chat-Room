@@ -209,6 +209,9 @@
       },
       mounted: function mounted() {
         this.group_id = document.getElementById('group_id').value;
+        this.user_id = document.getElementById('user_id').value;
+        this.userName = document.getElementById('nickname').value;
+        this.avatar = document.getElementById('avatar').value;
         // 初始化
         this.init(this.group_id);
         this.getHistory();
