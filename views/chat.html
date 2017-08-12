@@ -73,7 +73,7 @@
                 </cite>
                 <div class='chatRoom-user'><img :src='item.src' />
                 </div>
-                <div class='chatRoom-user-text' v-if='item.info' v-html='item.info' @click='getSelection()'></div>
+                <textarea class='chatRoom-user-text' v-if='item.info' v-html='item.info' @click='getSelection'></textarea>
                 <div class="chatRoom-user-text chatRoom-img" v-if='item.img'>
                   <img :src="item.img + '_400x400q50'" alt="" />
                 </div>
