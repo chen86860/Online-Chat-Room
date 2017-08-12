@@ -497,20 +497,20 @@
           }, 0)
         },
         copy(el) {
-          console.log(el)
+          console.log(el.target)
           let timer = 0
-          el.addEventListener('touchstart', (e) => {
+          el.target.addEventListener('touchstart', (e) => {
             e.preventDefault()
             timer = setTimeout(() => {
               alert('COPY')
               timer = 0
             }, 500)
           })
-          el.addEventListener('touchemove', (e) => {
+          el.target.addEventListener('touchemove', (e) => {
             clearTimeout(timer)
             timer = 0
           })
-          el.addEventListener('touchend', (e) => {
+          el.target.addEventListener('touchend', (e) => {
             clearTimeout(timer)
             // if (!timer) 
 
