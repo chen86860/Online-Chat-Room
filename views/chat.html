@@ -63,7 +63,7 @@
 
                 </div>
                 <div class="chatRoom-user-text" readonly contenteditable="true" class='chatRoom-user-text' v-if='item.info' v-html='item.info'
-                  @keypress.prevent></div>
+                  @keypress.self.prevent></div>
               </template>
               <template v-if='item.type==2'>
                 <cite>
