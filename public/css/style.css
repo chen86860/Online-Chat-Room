@@ -25,6 +25,7 @@ body {
     /*设置内嵌的元素在 3D 空间如何呈现：保留 3D*/
     overflow: hidden;
     -webkit-overflow-scrolling: touch;
+    background-color: #dadada;
 }
 
 ul {
@@ -168,12 +169,9 @@ li {
     box-sizing: border-box;
     top: 0;
     bottom: 0;
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-    /* -webkit-transform-style: preserve-3d; */
-    /*设置内嵌的元素在 3D 空间如何呈现：保留 3D*/
-    /* -webkit-backface-visibility: hidden; */
     width: 100%;
+    background-color: #efefef;
+    transition: all 200ms linear
 }
 
 
@@ -207,7 +205,7 @@ li {
     line-height: 22px;
     margin-top: 25px;
     padding: 8px 15px;
-    background-color: #e2e2e2;
+    background-color: #fff;
     border-radius: 3px;
     color: #333;
     word-break: break-all;
@@ -224,7 +222,7 @@ li {
     width: 0;
     height: 0;
     border-style: solid dashed dashed;
-    border-color: #e2e2e2 transparent transparent;
+    border-color: #fff transparent transparent;
     overflow: hidden;
     border-width: 10px;
 }
@@ -246,9 +244,10 @@ cite i {
     font-style: normal;
     position: relative;
     top: -23px;
-    background: #efefef;
-    border-radius: 5px;
-    padding: 2px 4px 0;
+    background: #dadada;
+    border-radius: 2px;
+    padding: 2px 8px 0;
+    color: #fff;
 }
 
 cite span {
@@ -293,14 +292,14 @@ cite span {
 .chatRoom-me .chatRoom-user-text {
     margin-left: 0;
     text-align: left;
-    background-color: #09bb07;
-    color: #fff;
+    background-color: #ace077;
+    color: #040503;
 }
 
 .chatRoom-me .chatRoom-user-text:after {
     left: auto;
     right: -10px;
-    border-top-color: #09bb07;
+    border-top-color: #ace077;
 }
 
 
@@ -390,7 +389,7 @@ li[class="chatRoom-notice"] {
 
 .chatBox-icon {
     position: relative;
-    margin: 0 10px;
+    margin: 0 10px 0px 0;
     display: inline-block;
     vertical-align: top;
     font-size: 24px;
@@ -430,13 +429,13 @@ li[class="chatRoom-notice"] {
     font-size: 14px;
     line-height: 32px;
     margin-left: 5px;
-    padding: 0 20px;
+    padding: 0 8px;
     background-color: #09bb07;
     color: #fff;
     border-radius: 3px;
     width: 60px;
     height: 34px;
-    text-align: center;
+    text-align: center
 }
 
 .chatRoom-img {
@@ -457,7 +456,6 @@ li[class="chatRoom-notice"] {
 
 .facewrap {
     width: 100%;
-    height: 175px;
     position: fixed;
     bottom: 54px;
     max-width: 640px;
@@ -479,11 +477,12 @@ li[class="chatRoom-notice"] {
     justify-content: space-around;
     -ms-flex-wrap: wrap;
     flex-wrap: wrap;
+    padding: 12px 0;
 }
 
 .facewrap ul li {
     padding: 8px 16px 0;
-    font-size: 24px;
+    font-size: 22px;
 }
 
 .fade-enter-active,
@@ -499,9 +498,22 @@ li[class="chatRoom-notice"] {
     opacity: 0;
 }
 
+.float-enter-active,
+.float-leave-active {
+    -webkit-transition: all 100ms ease-out;
+    transition: all 100ms ease-out
+}
+
+.float-enter,
+.float-leave-to {
+    -webkit-transform: translateY(10px);
+    transform: translateY(10px);
+    opacity: 0;
+}
+
 .refresh {
-    position: relative;
-    background-color: #ececec;
+    position: absolute;
+    /* background-color: #ececec; */
     width: 100%;
     text-align: center;
     font-size: 12px;
@@ -515,6 +527,7 @@ li[class="chatRoom-notice"] {
     -webkit-box-pack: center;
     -ms-flex-pack: center;
     justify-content: center;
+    top: 0;
 }
 
 #chat {

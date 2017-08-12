@@ -18,12 +18,26 @@
   <script src="../lib/jquery.min.js"></script>
   <script src="../lib/socket.io.js"></script>
   <script src="../lib/monent.js"></script>
-  <script src="../lib/dropload.min.js"></script>
   <script src="../lib/vue.js"></script>
   <style>
     body {
       overflow: auto !important;
       -webkit-overflow-scrolling: touch !important;
+    }
+
+    #contentmenu {
+      position: fixed;
+    }
+
+    #contentmenu button {
+      background: #ffffff;
+      border: none;
+      color: #171717;
+      border-radius: 2px;
+      width: 80px;
+      height: 36px;
+      box-shadow: 0px 3px 7px #ddd;
+      font-size: 14px;
     }
   </style>
 </head>
@@ -34,9 +48,7 @@
   <input type="hidden" name="" value="<%= nickname %>" id="nickname">
   <input type="hidden" name="" value="<%= avatar %>" id="avatar">
   <div id="chat">
-    <div :style="{height: pull + 'px',display:pull==0 ? 'none' : 'flex'}" class="refresh">
-      <p>{{refresh.tip}}</p>
-    </div>
+
     <div class="chatBox">
       <!-- <div class="chatBox-title">
       <div class="chatBox-info">
@@ -49,7 +61,10 @@
       </div>
     </div> -->
       <div class="chatBox-content">
-        <div class="chatBox-content-main">
+        <div style="display:flex" class="refresh">
+          <p>{{refresh.tip}}</p>
+        </div>
+        <div class="chatBox-content-main" :style="{'transform': 'translate3d(0,'+ pull +'px,0)'}">
           <ul class="chatBox-ul">
             <li v-for='item in messages' :key="item.time" :class="{'chatRoom-notice': item.type==3,'chatRoom-me': item.type==1}">
               <template v-if='item.type==1'>
@@ -62,7 +77,7 @@
                 <div class='chatRoom-user'><img :src='item.src' />
 
                 </div>
-                <div class="chatRoom-user-text" class='chatRoom-user-text' v-if='item.info' v-html='item.info' @keyup="copy" @click="copy"></div>
+                <div :class="['chatRoom-user-text','chatId-'+item.id]" v-if='item.info' v-html='item.info' @click="getSelection"></div>
               </template>
               <template v-if='item.type==2'>
                 <cite>
@@ -71,7 +86,7 @@
                 </cite>
                 <div class='chatRoom-user'><img :src='item.src' />
                 </div>
-                <div class="chatRoom-user-text" class='chatRoom-user-text' v-if='item.info' v-html='item.info' @keyup="copy" @click="copy"></div>
+                <div :class="['chatRoom-user-text','chatId-'+item.id]" v-if='item.info' v-html='item.info' @click="getSelection"></div>
                 <div class="chatRoom-user-text chatRoom-img" v-if='item.img'>
                   <img :src="item.img + '_400x400q50'" alt="" />
                 </div>
@@ -98,11 +113,16 @@
             </ul>
           </div>
         </transition>
+        <!-- <transition name='float'> -->
+        <!-- <div id="contentmenu" v-if='contentmenu.show' :style="{left:contentmenu.left + 'px',top:contentmenu.top + 'px'}">
+          <button type="button" class="copyBtn" data-clipboard-action="copy" :data-clipboard-target="'.'+contentmenu.target" onclick="void(0)">复制</button>
+        </div> -->
+        <!-- </transition> -->
       </div>
     </div>
   </div>
   <script>
-    "use strict";
+    'use strict';
 
     var socket = io.connect('/chatroom');
     var chat = new Vue({
@@ -138,8 +158,6 @@
           }, {
             code: "1F60A", name: "smiling face with smiling eyes", native: "😊"
           }, {
-            code: "263A", name: "white smiling face", native: "☺️"
-          }, {
             code: "1F604", name: "smiling face with open mouth and smiling eyes", native: "😄"
           }, {
             code: "1F622", name: "crying face", native: "😢"
@@ -155,8 +173,6 @@
             code: "1F60C", name: "relieved face", native: "😌"
           }, {
             code: "1F616", name: "confounded face", native: "😖"
-          }, {
-            code: "1F630", name: "face with open mouth and cold sweat", native: "😰"
           }, {
             code: "1F614", name: "pensive face", native: "😔"
           }, {
@@ -181,6 +197,10 @@
             code: "1F635", name: "dizzy face", native: "😵"
           }, {
             code: "1F613", name: "face with cold sweat", native: "😓"
+          }, {
+            code: "1F496", name: "sparkling heart", native: "💖"
+          }, {
+            code: "1F47B", name: "ghost", native: "👻"
           }],
           group_id: '',
           user_id: '',
@@ -199,7 +219,13 @@
             tip: '下拉刷新',
             type: 1
           },
-          pull: 0
+          pull: 0,
+          contentmenu: {
+            show: false,
+            left: 0,
+            top: 0,
+            target: 0
+          }
         };
       },
       mounted: function mounted() {
@@ -212,9 +238,6 @@
         this.getHistory();
         // this.initscroll()
         this.downRefresh('.chatBox-content', 'y');
-        document.querySelectorAll('.chatRoom-user-text').addEventListener('keypress', e => {
-          e.preventDefault()
-        })
       },
 
       methods: {
@@ -238,7 +261,7 @@
             return s < 10 ? '0' + s : s;
           };
           var date = new Date(ms);
-          return date.getMonth() + 1 + '-' + date.getDate() + ' ' + prefix(date.getHours()) + ':' + prefix(date.getMinutes());
+          return date.getMonth() + 1 + '/' + date.getDate() + ' ' + prefix(date.getHours()) + ':' + prefix(date.getMinutes());
         },
         init: function init(id) {
           var self = this;
@@ -275,8 +298,9 @@
           if (isMe) {
             this.messages.push({
               type: 1,
+              id: obj.uid ? obj.uid : obj.id,
               src: obj.src,
-              time: obj.time,
+              time: this.dateFormat(obj.time),
               name: obj.name,
               info: obj.info,
               cms_url: obj.cms_url || ''
@@ -285,18 +309,19 @@
             // 增加记录
             this.messages.push({
               type: 2,
+              id: obj.uid ? obj.uid : obj.id,
               src: obj.src,
-              time: obj.time,
+              time: this.dateFormat(obj.time),
               name: obj.name,
               cmsUrl: obj.cms_url || '',
-              info: obj.info + (obj.cms_url ? "<a href='" + obj.cms_url + "' class='link'>\u67E5\u770B\u66F4\u591A</a>" : '')
-            }
+              info: obj.info + (obj.cms_url ? "<a href='" + obj.cms_url + '\' class=\'link\'>\u67E5\u770B\u66F4\u591A</a>' : '')
               // 推广图
-            ); if (obj.img) {
+            }); if (obj.img) {
               this.messages.push({
                 type: 2,
+                id: obj.uid ? obj.uid : obj.id,
                 src: obj.src,
-                time: obj.time,
+                time: this.dateFormat(obj.time),
                 name: obj.name,
                 img: obj.img
               });
@@ -311,14 +336,15 @@
           this.sendMsg();
         },
         sendMsg: function sendMsg() {
-          var self = this
+          var self = this;
           if (!self.textarea) return;
           var msg = {
             id: self.user_id,
             info: self.textarea,
-            time: moment().format('M/D HH:mm:ss'),
+            time: new Date().getTime(),
             name: self.nickname,
-            src: self.avatar
+            src: self.avatar,
+            uid: new Date().getTime()
           };
           socket.emit('newMsg', msg);
           self.textarea = '';
@@ -358,21 +384,21 @@
           if (self.isEnd) return;
           if (self.isLock) return;
           self.isLock = true;
-          var requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame;
-          var cancelAnimationFrame = window.cancelAnimationFrame || window.webkitCancelAnimationFrame || window.mozCancelAnimationFrame || window.msCancelAnimationFrame;
-          var req = void 0;
-          var step = function step(_) {
-            self.pull -= 8;
-            if (self.pull <= 40) {
-              cancelAnimationFrame(req); self.pull = 40; self.refresh.tip = '加载中...'; return;
-            }
-            req = requestAnimationFrame(step);
-          };
-          if (self.pull === 80) {
-            req = requestAnimationFrame(step);
-          } else {
-            self.pull = 40;
-          }
+          // var requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame;
+          // var cancelAnimationFrame = window.cancelAnimationFrame || window.webkitCancelAnimationFrame || window.mozCancelAnimationFrame || window.msCancelAnimationFrame;
+          // var req = void 0;
+          // var step = function step(_) {
+          //   self.pull -= 8;
+          //   if (self.pull <= 40) {
+          //     cancelAnimationFrame(req); self.pull = 40; self.refresh.tip = '加载中...'; return;
+          //   }
+          //   req = requestAnimationFrame(step);
+          // };
+          // if (self.pull === 80) {
+          //   req = requestAnimationFrame(step);
+          // } else {
+          self.pull = 40;
+          // }
           self.refresh.tip = '加载中...';
           $.ajax({
             url: "./history/" + self.group_id + "/" + self.page + "/" + self.size,
@@ -383,6 +409,7 @@
                 console.log('Get Page :', self.page);
                 res.data.listData.forEach(function (e) {
                   self.messages.unshift({
+                    id: e.id || '',
                     type: e.content_type,
                     img: e.content_type == 2 ? e.content : '',
                     src: e.head_portrait,
@@ -398,17 +425,19 @@
 
                 self.refresh.tip = '刷新成功';
                 setTimeout(function () {
-                  var requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame;
-                  var cancelAnimationFrame = window.cancelAnimationFrame || window.webkitCancelAnimationFrame || window.mozCancelAnimationFrame || window.msCancelAnimationFrame;
-                  var req = void 0;
-                  var step = function step(_) {
-                    self.pull -= 2.5;
-                    if (self.pull === 0) {
-                      cancelAnimationFrame(req); self.pull = 0; self.refresh.tip = '下拉刷新'; return;
-                    }
-                    req = requestAnimationFrame(step);
-                  };
-                  req = requestAnimationFrame(step);
+                  // var requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame;
+                  // var cancelAnimationFrame = window.cancelAnimationFrame || window.webkitCancelAnimationFrame || window.mozCancelAnimationFrame || window.msCancelAnimationFrame;
+                  // var req = void 0;
+                  // var step = function step(_) {
+                  //   self.pull -= 2.5;
+                  //   if (self.pull === 0) {
+                  //     cancelAnimationFrame(req); self.pull = 0; self.refresh.tip = '下拉刷新'; return;
+                  //   }
+                  //   req = requestAnimationFrame(step);
+                  // };
+                  // req = requestAnimationFrame(step);
+                  self.pull = 0;
+                  self.refresh.tip = '下拉刷新';
                 }, 600);
 
                 self.isLock = false;
@@ -484,39 +513,16 @@
             self.getHistory();
           }, false);
         },
-        getSelection(e) {
-          console.log(e)
-
-          let sel = window.getSelection() || window.document.selection.createRange()
-          let range = window.document.createRange()
-          let el = document.querySelector(e.target)
+        getSelection: function getSelection(e) {
+          console.log(e);
+          var sel = window.getSelection() || window.document.selection.createRange();
+          var range = window.document.createRange();
+          var el = e.target;
           window.setTimeout(function () {
-            range.selectNodeContents(el)
-            sel.removeAllRanges()
-            sel.addRange(range)
-          }, 0)
-        },
-        copy(el) {
-          console.log(el.target)
-          let timer = 0
-          el.target.addEventListener('touchstart', (e) => {
-            e.preventDefault()
-            timer = setTimeout(() => {
-              alert('COPY')
-              timer = 0
-            }, 500)
-          })
-          el.target.addEventListener('touchemove', (e) => {
-            clearTimeout(timer)
-            timer = 0
-          })
-          el.target.addEventListener('touchend', (e) => {
-            clearTimeout(timer)
-            // if (!timer) 
-
-            // }
-            return false;
-          })
+            range.selectNodeContents(el);
+            sel.removeAllRanges();
+            sel.addRange(range);
+          }, 0);
         }
       },
       directives: {
@@ -528,6 +534,18 @@
           }
         }
       }
+    });
+
+    $(document).ready(function () {
+      $(document).bind('contextmenu', function (e) {
+        chat.getSelection(e);
+      });
+      $(document).bind('touchstart', function (e) {
+        if (e.target.nodeName !== 'BUTTON' && chat.contentmenu.show) {
+          chat.contentmenu.show = false;
+        }
+        if (e.target.nodeName !== 'LI' && chat.showEmoji) chat.showEmoji = false;
+      }, true);
     });
   </script>
 </body>
