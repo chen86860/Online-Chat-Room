@@ -62,7 +62,7 @@
                 <div class='chatRoom-user'><img :src='item.src' />
 
                 </div>
-                <div class="chatRoom-user-text" class='chatRoom-user-text' v-if='item.info' v-html='item.info' @keyup.prevent="copy"></div>
+                <div class="chatRoom-user-text" class='chatRoom-user-text' v-if='item.info' v-html='item.info' @keyup="copy" @click="copy"></div>
               </template>
               <template v-if='item.type==2'>
                 <cite>
@@ -71,7 +71,7 @@
                 </cite>
                 <div class='chatRoom-user'><img :src='item.src' />
                 </div>
-                <div class="chatRoom-user-text" class='chatRoom-user-text' v-if='item.info' v-html='item.info' @keyup.prevent="copy"></div>
+                <div class="chatRoom-user-text" class='chatRoom-user-text' v-if='item.info' v-html='item.info' @keyup="copy" @click="copy"></div>
                 <div class="chatRoom-user-text chatRoom-img" v-if='item.img'>
                   <img :src="item.img + '_400x400q50'" alt="" />
                 </div>
@@ -497,6 +497,7 @@
           }, 0)
         },
         copy(el) {
+          console.log(el)
           let timer = 0
           el.addEventListener('touchstart', (e) => {
             e.preventDefault()
