@@ -396,7 +396,7 @@
                 res.data.listData.forEach(function (e) {
                   self.messages.unshift({
                     id: e.id || '',
-                    type: e.id == self.user_id ? 1 : 2,
+                    type: e.agent_id == self.user_id ? 1 : 2,
                     img: e.content_type == 2 ? e.content : '',
                     src: e.head_portrait,
                     time: self.dateFormat(e.send_time),
