@@ -540,6 +540,10 @@
       $(document).bind('contextmenu', function (e) {
         chat.getSelection(e);
       });
+      // document.body.addEventListener('touchmove', function (e) {
+      // e.preventDefault()
+      // })
+
       $(document).bind('touchstart', function (e) {
         if (e.target.nodeName !== 'BUTTON' && chat.contentmenu.show) {
           chat.contentmenu.show = false;

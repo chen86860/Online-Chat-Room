@@ -26,6 +26,12 @@ body {
     overflow: hidden;
     -webkit-overflow-scrolling: touch;
     background-color: #dadada;
+    font-size: 15px;
+}
+
+body.noscroll {
+    position: fixed;
+    overflow: hidden;
 }
 
 ul {
@@ -211,7 +217,7 @@ li {
     word-break: break-all;
     display: inline-block;
     vertical-align: top;
-    font-size: 14px;
+    font-size: 15px;
 }
 
 .chatRoom-user-text:after {
