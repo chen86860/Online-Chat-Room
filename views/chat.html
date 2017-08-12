@@ -384,21 +384,7 @@
           if (self.isEnd) return;
           if (self.isLock) return;
           self.isLock = true;
-          // var requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame;
-          // var cancelAnimationFrame = window.cancelAnimationFrame || window.webkitCancelAnimationFrame || window.mozCancelAnimationFrame || window.msCancelAnimationFrame;
-          // var req = void 0;
-          // var step = function step(_) {
-          //   self.pull -= 8;
-          //   if (self.pull <= 40) {
-          //     cancelAnimationFrame(req); self.pull = 40; self.refresh.tip = '加载中...'; return;
-          //   }
-          //   req = requestAnimationFrame(step);
-          // };
-          // if (self.pull === 80) {
-          //   req = requestAnimationFrame(step);
-          // } else {
           self.pull = 40;
-          // }
           self.refresh.tip = '加载中...';
           $.ajax({
             url: "./history/" + self.group_id + "/" + self.page + "/" + self.size,
@@ -410,7 +396,7 @@
                 res.data.listData.forEach(function (e) {
                   self.messages.unshift({
                     id: e.id || '',
-                    type: e.content_type,
+                    type: e.id == self.user_id ? 1 : 2,
                     img: e.content_type == 2 ? e.content : '',
                     src: e.head_portrait,
                     time: self.dateFormat(e.send_time),
@@ -425,17 +411,6 @@
 
                 self.refresh.tip = '刷新成功';
                 setTimeout(function () {
-                  // var requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame;
-                  // var cancelAnimationFrame = window.cancelAnimationFrame || window.webkitCancelAnimationFrame || window.mozCancelAnimationFrame || window.msCancelAnimationFrame;
-                  // var req = void 0;
-                  // var step = function step(_) {
-                  //   self.pull -= 2.5;
-                  //   if (self.pull === 0) {
-                  //     cancelAnimationFrame(req); self.pull = 0; self.refresh.tip = '下拉刷新'; return;
-                  //   }
-                  //   req = requestAnimationFrame(step);
-                  // };
-                  // req = requestAnimationFrame(step);
                   self.pull = 0;
                   self.refresh.tip = '下拉刷新';
                 }, 600);
