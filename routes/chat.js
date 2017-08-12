@@ -8,6 +8,11 @@ const CONFIG = require('../config/conf')
 let socketArr = []
 let socketObj = {}
 let noop = () => { }
+let sendRobot = {
+  user_id: null,
+  nickname: '',
+  avatar: ''
+}
 
 module.exports = function (io) {
   router.get("/history/:group/:page/:size", (req, res) => {
@@ -91,7 +96,7 @@ module.exports = function (io) {
           // 保存发单关键词或聊天记录
           $http.post(API.savePost + id, {
             user_id: data.id,
-            nickname: data.username,
+            nickname: data.name,
             head_portrait: data.src,
             content: data.info,
             content_type: data.type || 1
