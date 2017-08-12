@@ -63,7 +63,7 @@
 
                 </div>
                 <div class="chatRoom-user-text" readonly contenteditable="true" class='chatRoom-user-text' v-if='item.info' v-html='item.info'
-                  @keyup.self.prevent></div>
+                  @keyup.self.prevent='preventEdit'></div>
               </template>
               <template v-if='item.type==2'>
                 <cite>
@@ -214,6 +214,9 @@
         this.getHistory();
         // this.initscroll()
         this.downRefresh('.chatBox-content', 'y');
+        document.querySelectorAll('.chatRoom-user-text').addEventListener('keypress', e => {
+          e.preventDefault()
+        })
       },
 
       methods: {
@@ -494,6 +497,17 @@
             sel.removeAllRanges()
             sel.addRange(range)
           }, 0)
+        },
+        preventEdit(event) {
+          if (event.ctrlKey) {
+            // allow Ctrl-A, Ctrl-(any arrow key) combinations
+            return true;
+          }
+          // keycode: http://www.programming-magic.com/file/20080205232140/keycode_table.html
+          if (33 <= event.keyCode && event.keyCode <= 40) {
+            return true;
+          }
+          return false;
         }
       },
       directives: {
