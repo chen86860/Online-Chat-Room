@@ -124,7 +124,22 @@
   <script>
     'use strict';
 
-    var socket = io.connect('/chatroom');
+    var socket = io('/chatroom');
+    $(document).ready(function () {
+      $(document).bind('contextmenu', function (e) {
+        chat.getSelection(e);
+      });
+      document.body.addEventListener('touchmove', function (e) {
+        e.preventDefault()
+      })
+
+      $(document).bind('touchstart', function (e) {
+        if (e.target.nodeName !== 'BUTTON' && chat.contentmenu.show) {
+          chat.contentmenu.show = false;
+        }
+        if (e.target.nodeName !== 'LI' && chat.showEmoji) chat.showEmoji = false;
+      }, true);
+    });
     var chat = new Vue({
       el: '#chat',
       data: function data() {
@@ -509,22 +524,6 @@
           }
         }
       }
-    });
-
-    $(document).ready(function () {
-      $(document).bind('contextmenu', function (e) {
-        chat.getSelection(e);
-      });
-      // document.body.addEventListener('touchmove', function (e) {
-      // e.preventDefault()
-      // })
-
-      $(document).bind('touchstart', function (e) {
-        if (e.target.nodeName !== 'BUTTON' && chat.contentmenu.show) {
-          chat.contentmenu.show = false;
-        }
-        if (e.target.nodeName !== 'LI' && chat.showEmoji) chat.showEmoji = false;
-      }, true);
     });
   </script>
 </body>

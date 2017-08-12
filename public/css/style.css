@@ -24,7 +24,7 @@ body {
     -webkit-backface-visibility: hidden;
     /*设置内嵌的元素在 3D 空间如何呈现：保留 3D*/
     overflow: hidden;
-    -webkit-overflow-scrolling: none;
+    -webkit-overflow-scrolling: touch;
     background-color: #dadada;
     font-size: 15px;
 }
