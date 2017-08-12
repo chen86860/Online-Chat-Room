@@ -62,8 +62,7 @@
                 <div class='chatRoom-user'><img :src='item.src' />
 
                 </div>
-                <div class="chatRoom-user-text" readonly contenteditable="true" class='chatRoom-user-text' v-if='item.info' v-html='item.info'
-                  @keyup.delete.self.prevent></div>
+                <div class="chatRoom-user-text" class='chatRoom-user-text' v-if='item.info' v-html='item.info' @keyup.prevent="copy"></div>
               </template>
               <template v-if='item.type==2'>
                 <cite>
@@ -72,8 +71,7 @@
                 </cite>
                 <div class='chatRoom-user'><img :src='item.src' />
                 </div>
-                <div class="chatRoom-user-text" readonly contenteditable="true" class='chatRoom-user-text' v-if='item.info' v-html='item.info'
-                  @click='getSelection'></div>
+                <div class="chatRoom-user-text" class='chatRoom-user-text' v-if='item.info' v-html='item.info' @keyup.prevent="copy"></div>
                 <div class="chatRoom-user-text chatRoom-img" v-if='item.img'>
                   <img :src="item.img + '_400x400q50'" alt="" />
                 </div>
@@ -498,16 +496,25 @@
             sel.addRange(range)
           }, 0)
         },
-        preventEdit(event) {
-          if (event.ctrlKey) {
-            // allow Ctrl-A, Ctrl-(any arrow key) combinations
-            return true;
-          }
-          // keycode: http://www.programming-magic.com/file/20080205232140/keycode_table.html
-          if (33 <= event.keyCode && event.keyCode <= 40) {
-            return true;
-          }
-          return false;
+        copy(el) {
+          let timer = 0
+          el.addEventListener('touchstart', (e) => {
+            timer = setTimeout(() => {
+              alert('COPY')
+              timer = 0
+            }, 500)
+          })
+          el.addEventListener('touchemove', (e) => {
+            clearTimeout(timer)
+            timer = 0
+          })
+          el.addEventListener('touchend', (e) => {
+            clearTimeout(timer)
+            // if (!timer) {
+
+            // }
+            return false;
+          })
         }
       },
       directives: {
