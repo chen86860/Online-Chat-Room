@@ -499,6 +499,7 @@
         copy(el) {
           let timer = 0
           el.addEventListener('touchstart', (e) => {
+            e.preventDefault()
             timer = setTimeout(() => {
               alert('COPY')
               timer = 0
@@ -510,7 +511,7 @@
           })
           el.addEventListener('touchend', (e) => {
             clearTimeout(timer)
-            // if (!timer) {
+            // if (!timer) 
 
             // }
             return false;
