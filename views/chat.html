@@ -13,33 +13,12 @@
   <meta name="full-screen" content="yes">
   <meta name="x5-fullscreen" content="true">
   <link rel="stylesheet" type="text/css" href="../css/style.css">
+  <link rel="stylesheet" type="text/css" href="../css/zoom.css">
   <link rel="stylesheet" type="text/css" href="../css/iconfont.css">
-  <link rel="stylesheet" type="text/css" href="../css/dropload.css">
   <script src="../lib/jquery.min.js"></script>
+
   <script src="../lib/socket.io.js"></script>
-  <script src="../lib/monent.js"></script>
   <script src="../lib/vue.js"></script>
-  <style>
-    body {
-      overflow: auto !important;
-      -webkit-overflow-scrolling: touch !important;
-    }
-
-    #contentmenu {
-      position: fixed;
-    }
-
-    #contentmenu button {
-      background: #ffffff;
-      border: none;
-      color: #171717;
-      border-radius: 2px;
-      width: 80px;
-      height: 36px;
-      box-shadow: 0px 3px 7px #ddd;
-      font-size: 14px;
-    }
-  </style>
 </head>
 
 <body>
@@ -68,27 +47,38 @@
           <ul class="chatBox-ul">
             <li v-for='item in messages' :key="item.time" :class="{'chatRoom-notice': item.type==3,'chatRoom-me': item.type==1}">
               <template v-if='item.type==1'>
-                <cite>
+                <div class="timestamp" v-if="item.time">
                   <i>{{item.time}}</i>
-                  <span>
-                   {{item.name}}
-                </span> 
-                </cite>
-                <div class='chatRoom-user'><img :src='item.src' />
-
                 </div>
-                <div :class="['chatRoom-user-text','chatId-'+item.id]" v-if='item.info' v-html='item.info' @click="getSelection"></div>
+                <div class="chatRoom-wrap chatRoom-me-wrap">
+                  <div class="chatRoom-content">
+                    <cite>
+                      <span>
+                      {{item.name}}
+                      </span>
+                    </cite>
+                    <div :class="['chatRoom-user-text','chatId-'+item.id]" v-if='item.info' v-html='item.info' @click="getSelection"></div>
+                  </div>
+                  <div class='chatRoom-user'><img :src='item.src' />
+                  </div>
+                </div>
               </template>
               <template v-if='item.type==2'>
-                <cite>
-                  <span>{{item.name}}</span>
+                <div class="timestamp" v-if="item.time">
                   <i>{{item.time}}</i>
-                </cite>
-                <div class='chatRoom-user'><img :src='item.src' />
                 </div>
-                <div :class="['chatRoom-user-text','chatId-'+item.id]" v-if='item.info' v-html='item.info' @click="getSelection"></div>
-                <div class="chatRoom-user-text chatRoom-img" v-if='item.img'>
-                  <img :src="item.img + '_400x400q50'" alt="" />
+                <div class="chatRoom-wrap">
+                  <div class='chatRoom-user'><img :src='item.src' /></div>
+                  <div class="chatRoom-content">
+                    <cite>
+                    <span>{{item.name}}</span>
+                    </cite>
+                    <div :class="['chatRoom-user-text','chatId-'+item.id]" v-if='item.info' v-html='item.info' @click="getSelection"></div>
+                    <div class="chatRoom-user-text chatRoom-img" v-if='item.img' @click="showPic(item)">
+                      <img :src="item.img + '_400x400q50'" alt="" />
+                    </div>
+
+                  </div>
                 </div>
               </template>
               <template v-if='item.type==3'>
@@ -101,7 +91,7 @@
         <div class="chatBox-content-footer">
           <div class="chatBox-textarea">
             <span class="chatBox-icon iconfont icon-xiaolian" title="表情" @click='showPannel'></span>
-            <textarea class="textarea" v-model='textarea' @keyup.enter.self.prevent="sendText" v-focus ref="userinput"></textarea>
+            <textarea class="textarea" v-model='textarea' @keypress="sendText" v-focus ref="userinput"></textarea>
             <!-- <span class="chatBox-btn-send" @click="sendMsg">发送</span> -->
           </div>
 
@@ -113,11 +103,11 @@
             </ul>
           </div>
         </transition>
-        <!-- <transition name='float'> -->
-        <!-- <div id="contentmenu" v-if='contentmenu.show' :style="{left:contentmenu.left + 'px',top:contentmenu.top + 'px'}">
-          <button type="button" class="copyBtn" data-clipboard-action="copy" :data-clipboard-target="'.'+contentmenu.target" onclick="void(0)">复制</button>
-        </div> -->
-        <!-- </transition> -->
+        <transition name='float'>
+          <div class="picView" v-show='picView.show' @click="picView.show = false">
+            <img :src="picView.url" data-action="zoom" alt="">
+          </div>
+        </transition>
       </div>
     </div>
   </div>
@@ -126,6 +116,9 @@
 
     var group_id = document.getElementById('group_id').value;
     var socket = io.connect('/' + group_id);
+    var timer = null
+    var isShowTime = false
+    var timerCount = 0
 
     var chat = new Vue({
       el: '#chat',
@@ -227,6 +220,12 @@
             left: 0,
             top: 0,
             target: 0
+          },
+          contentScroll: 0,
+          isShowPic: false,
+          picView: {
+            show: false,
+            url: ''
           }
         };
       },
@@ -303,54 +302,74 @@
               type: 1,
               id: obj.uid ? obj.uid : obj.id,
               src: obj.src,
-              time: this.dateFormat(obj.time),
+              time: obj.time ? this.dateFormat(obj.time) : '',
               name: obj.name,
               info: obj.info,
               cms_url: obj.cms_url || ''
             });
           } else {
+            // 存在商品推荐图
+            if (obj.img) {
+              this.messages.push({
+                type: 2,
+                id: obj.uid ? obj.uid : obj.id,
+                src: obj.src,
+                time: obj.time ? this.dateFormat(obj.time) : '',
+                name: obj.name,
+                img: obj.img
+              });
+            }
             // 增加记录
             this.messages.push({
               type: 2,
               id: obj.uid ? obj.uid : obj.id,
               src: obj.src,
-              time: this.dateFormat(obj.time),
+              time: obj.time ? this.dateFormat(obj.time) : '',
               name: obj.name,
               cmsUrl: obj.cms_url || '',
               info: obj.info + (obj.cms_url ? "<a href='" + obj.cms_url + '\' class=\'link\'>\u67E5\u770B\u66F4\u591A</a>' : '')
               // 推广图
-            }); if (obj.img) {
-              this.messages.push({
-                type: 2,
-                id: obj.uid ? obj.uid : obj.id,
-                src: obj.src,
-                time: this.dateFormat(obj.time),
-                name: obj.name,
-                img: obj.img
-              });
-            }
+            });
           }
-          this.scrollToBottom();
+          // 浏览视图在底部时才固定消息到最底部
+          if ($(".chatBox-content").scrollTop() >= self.contentScroll) {
+            this.scrollToBottom();
+          }
         },
         sendText: function sendText(e) {
-          if (!this.textarea) return;
-          e.stopPropagation();
-          e.preventDefault();
-          this.sendMsg();
+          var e = e || window.event
+          if (e.keyCode == 13) {
+            // 阻止回车换行
+            e.cancelBubble = true;
+            e.preventDefault();
+            e.stopPropagation();
+            this.scrollToBottom();
+            this.sendMsg()
+          }
         },
         sendMsg: function sendMsg() {
           var self = this;
           if (!self.textarea) return;
+          // 第一次输入时，显示时间
+          if (timerCount === 0) { isShowTime = true; timerCount++ }
+          if (!isShowTime) {
+            clearTimeout(timer)
+            timer = setTimeout(function () {
+              isShowTime = true
+            }, 1000 * 60 * 3)
+          }
           var msg = {
             id: self.user_id,
             info: self.textarea,
-            time: new Date().getTime(),
+            time: isShowTime ? new Date().getTime() : '',
             name: self.nickname,
             src: self.avatar,
             uid: new Date().getTime()
           };
+          if (isShowTime) isShowTime = false
+
           socket.emit('newMsg', msg);
-          self.textarea = '';
+          self.textarea = ''
         },
         initscroll: function initscroll() {
           var self = this;
@@ -368,19 +387,8 @@
           }, 50);
         },
         scrollToBottom: function scrollToBottom() {
-          // var sum = 0;
-          // $(".chatBox-ul li").each((i, e) => {
-          //   sum += $(e).outerHeight() + 50;
-          // });
           $(".chatBox-content").animate({ scrollTop: $('.chatBox-content-main').outerHeight() }, 100);
-        },
-        genUid: function genUid() {
-          return new Date().getTime() + "" + Math.floor(Math.random() * 899 + 100);
-          window.addEventListener('scroll', function (e) {
-            if (document.querySelector('.chatBox-ul').scrollTop < 300) {
-              console.log(1);
-            }
-          });
+          this.contentScroll = $(".chatBox-content").scrollTop()
         },
         getHistory: function getHistory() {
           var self = this;
@@ -402,7 +410,7 @@
                     type: e.agent_id == self.user_id ? 1 : 2,
                     img: e.content_type == 2 ? e.content : '',
                     src: e.head_portrait,
-                    time: self.dateFormat(e.send_time),
+                    time: e.send_time ? self.dateFormat(e.send_time) : '',
                     name: e.nickname || '',
                     info: e.content_type == 1 ? e.content : ''
                   });
@@ -502,6 +510,12 @@
             sel.removeAllRanges();
             sel.addRange(range);
           }, 0);
+        },
+        showPic(item) {
+          var self = this;
+          this.picView.url = item.img
+          this.picView.id = item.id
+          this.picView.show = true
         }
       },
       directives: {
@@ -521,6 +535,8 @@
       }, true);
     };
   </script>
+  <script src="../lib/transition.js"></script>
+  <script src="../lib/zoom.min.js"></script>
 </body>
 
 </html>
