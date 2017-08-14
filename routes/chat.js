@@ -70,7 +70,7 @@ module.exports = function (io) {
       onlineUsers: {},
       onlineCount: 0
     }
-    io.of('/chatroom')
+    io.of('/' + id)
       .on("connection", client => {
         client.on("login", user => {
           client.uid = user.id;
