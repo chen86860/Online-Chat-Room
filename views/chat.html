@@ -273,27 +273,27 @@
             name: self.nickname,
             avatar: self.avatar
           });
-          socket.on("welcome", function (data) {
-            self.messages.push({
-              type: 3,
-              info: data.name + ' 加入本群'
-            });
-            self.scrollToBottom();
-          });
+          // socket.on("welcome", function (data) {
+          //   self.messages.push({
+          //     type: 3,
+          //     info: data.name + ' 加入本群'
+          //   });
+          //   self.scrollToBottom();
+          // });
 
           socket.on("serverMsg", function (data) {
             self.insertMsg(data);
           });
-          socket.on("logout", function (data) {
-            self.messages.push({
-              type: 3,
-              info: data.name + ' 已退出'
-            });
-            self.scrollToBottom();
-          });
-          socket.on('updateCount', function (data) {
-            self.count = parseInt(data, 10);
-          });
+          // socket.on("logout", function (data) {
+          //   self.messages.push({
+          //     type: 3,
+          //     info: data.name + ' 已退出'
+          //   });
+          //   self.scrollToBottom();
+          // });
+          // socket.on('updateCount', function (data) {
+          //   self.count = parseInt(data, 10);
+          // });
         },
         insertMsg: function insertMsg(obj) {
           var self = this;

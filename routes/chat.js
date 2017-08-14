@@ -82,7 +82,7 @@ module.exports = function (io) {
               src: user.avatar
             };
           }
-          client.broadcast.emit("welcome", user);
+          // client.broadcast.emit("welcome", user);
           // client.broadcast.emit('updateCount', ++socketObj[id].onlineCount)
           console.log(user.name + " 加入聊天室")
         });
@@ -167,7 +167,7 @@ module.exports = function (io) {
               if (--socketObj[id].onlineCount === 0) {
                 delete socketObj[id]
               }
-              client.broadcast.emit("logout", msg);
+              // client.broadcast.emit("logout", msg);
               console.log(msg.name + " 离开聊天室");
             }
           }, 0)
