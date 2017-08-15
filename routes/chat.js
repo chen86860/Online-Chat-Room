@@ -39,13 +39,13 @@ module.exports = function (io) {
   })
   router.get("/room", (req, res) => {
     console.log(req.query)
-    if (req.query.group_id && req.query.nickname && req.query.user_id && req.query.avatar) {
+    if (req.query.group_id) {
       if (!socketArr.includes(req.query.group_id)) createSocket(req.query.group_id)
       res.render("chat", {
         group_id: req.query.group_id,
-        user_id: req.query.user_id,
-        nickname: req.query.nickname,
-        avatar: req.query.avatar
+        user_id: req.query.user_id || 0,
+        nickname: req.query.nickname || '游客',
+        avatar: req.query.avatar || '../img/user.png'
       })
     } else {
       res.render('error', {
@@ -93,19 +93,22 @@ module.exports = function (io) {
           client.emit("serverMsg", data);
           client.broadcast.emit("serverMsg", data);
 
-          // 保存发单关键词或聊天记录
-          $http.post(API.savePost + id, {
-            user_id: data.id,
-            nickname: data.name,
-            head_portrait: data.src,
-            content: data.info,
-            content_type: data.type || 1,
-            send_time: data.time
-          }).then(() => {
-            console.log('OK')
-          }).catch(() => {
-            console.log('bad')
-          })
+          // 不保存游客聊天记录
+          if (data.id != 0) {
+            // 保存发单关键词或聊天记录
+            $http.post(API.savePost + id, {
+              user_id: data.id,
+              nickname: data.name,
+              head_portrait: data.src,
+              content: data.info,
+              content_type: data.type || 1,
+              send_time: data.time
+            }).then(() => {
+              console.log('OK')
+            }).catch(() => {
+              console.log('bad')
+            })
+          }
 
           // 匹配找单关键字，请求找单
           if (/^找[^.]{1,}/i.test(data.info)) {
@@ -125,6 +128,7 @@ module.exports = function (io) {
               res.name = '发单机器人'
               client.broadcast.emit('serverMsg', res)
               client.emit('serverMsg', res)
+
               //保存找单图片
               if (res.img) {
                 $http.post(API.savePost + id, {
@@ -163,6 +167,7 @@ module.exports = function (io) {
                   console.log('OK')
                 })
               }
+
             }).catch(err => {
               console.log('err in get order', err)
             })
@@ -221,16 +226,16 @@ module.exports = function (io) {
 
 
   // 后台登录
-  router.get('/login', (req, res) => {
-    res.render('login')
-  })
+  // router.get('/login', (req, res) => {
+  //   res.render('login')
+  // })
 
   // 管理界面
-  router.get('/admin', (req, res) => {
-    res.render('admin', {
-      socketArr: socketArr
-    })
-  })
+  // router.get('/admin', (req, res) => {
+  //   res.render('admin', {
+  //     socketArr: socketArr
+  //   })
+  // })
 
   return router;
 };

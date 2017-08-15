@@ -16,7 +16,8 @@
   <link rel="stylesheet" type="text/css" href="../css/iconfont.css">
   <script src="../lib/jquery.min.js"></script>
   <script src="../lib/socket.io.js"></script>
-  <script src="../lib/iscroll-lite.js"></script>
+  <script src="../lib/jweixin-1.2.0.js"></script>
+  <script src="../lib/share.js"></script>
   <script src="../lib/inobounce.min.js"></script>
   <script src="../lib/vue.js"></script>
 </head>
@@ -91,7 +92,7 @@
         <div class="chatBox-content-footer">
           <div class="chatBox-textarea">
             <span class="chatBox-icon iconfont icon-xiaolian" title="表情" @click='showPannel'></span>
-            <textarea class="textarea" v-model='textarea' @keypress="sendText" v-focus ref="userinput"></textarea>
+            <textarea class="userInput" v-model='textarea' @keypress="sendText" v-focus ref="userinput"></textarea>
             <!-- <span class="chatBox-btn-send" @click="sendMsg">发送</span> -->
           </div>
 
@@ -114,11 +115,13 @@
   <script>
     'use strict';
 
+    'use strict';
+
     var group_id = document.getElementById('group_id').value;
     var socket = io.connect('/' + group_id);
-    var timer = null
-    var isShowTime = false
-    var timerCount = 0
+    var timer = null;
+    var isShowTime = false;
+    var timerCount = 0;
 
     var chat = new Vue({
       el: '#chat',
@@ -239,6 +242,19 @@
         this.getHistory();
         // this.initscroll()
         this.downRefresh('.chatBox-content', 'y');
+
+        // 微信分享
+        var link = window.location.origin + window.location.pathname + '?group_id' + this.group_id;
+        var share_info = {
+          title: '布谷鸟优惠推荐',
+          link: link,
+          desc: '布谷鸟优惠推荐',
+          imgUrl: 'http://i2.bvimg.com/585075/d1b9936ca1faea81.png'
+        };
+        duoui.weixin({
+          share: share_info,
+          redirect: link
+        });
       },
 
       methods: {
@@ -337,27 +353,28 @@
           }
         },
         sendText: function sendText(e) {
-          var e = e || window.event
+          var e = e || window.event;
           if (e.keyCode == 13) {
             // 阻止回车换行
             e.cancelBubble = true;
             e.preventDefault();
             e.stopPropagation();
             this.scrollToBottom();
-            this.sendMsg()
+            this.sendMsg();
           }
-
         },
         sendMsg: function sendMsg() {
           var self = this;
           if (!self.textarea) return;
           // 第一次输入时，显示时间
-          if (timerCount === 0) { isShowTime = true; timerCount++ }
+          if (timerCount === 0) {
+            isShowTime = true; timerCount++;
+          }
           if (!isShowTime) {
-            clearTimeout(timer)
+            clearTimeout(timer);
             timer = setTimeout(function () {
-              isShowTime = true
-            }, 1000 * 60 * 3)
+              isShowTime = true;
+            }, 1000 * 60 * 3);
           }
           var msg = {
             id: self.user_id,
@@ -367,10 +384,10 @@
             src: self.avatar,
             uid: new Date().getTime()
           };
-          if (isShowTime) isShowTime = false
+          if (isShowTime) isShowTime = false;
 
           socket.emit('newMsg', msg);
-          self.textarea = ''
+          self.textarea = '';
         },
         initscroll: function initscroll() {
           var self = this;
@@ -389,7 +406,7 @@
         },
         scrollToBottom: function scrollToBottom() {
           $(".chatBox-content").animate({ scrollTop: $('.chatBox-content-main').outerHeight() }, 100);
-          this.contentScroll = $(".chatBox-content").scrollTop()
+          this.contentScroll = $(".chatBox-content").scrollTop();
         },
         getHistory: function getHistory() {
           var self = this;
@@ -512,11 +529,11 @@
             sel.addRange(range);
           }, 0);
         },
-        showPic(item) {
+        showPic: function showPic(item) {
           var self = this;
-          this.picView.url = item.img
-          this.picView.id = item.id
-          this.picView.show = true
+          this.picView.url = item.img;
+          this.picView.id = item.id;
+          this.picView.show = true;
         }
       },
       directives: {
@@ -534,7 +551,15 @@
       window.document.addEventListener('touchstart', function (e) {
         if (e.target.nodeName !== 'LI' && chat.showEmoji) chat.showEmoji = false;
       }, true);
-
+      var userInput = document.querySelector('.userInput');
+      var pannel = document.querySelector('.chatBox-content-footer');
+      userInput.addEventListener('focus', function (e) {
+        setTimeout(function () {
+          pannel.scrollIntoView(true);
+          pannel.scrollIntoViewIfNeeded();
+        }, 200);
+      });
+    });
 
       // $('body').on('touchmove', function (e) {
       //   var searchTerms = '.scroll, .scroll-y, .scroll-x',
@@ -598,24 +623,23 @@
 
       // apply iscroll to scrolling element
       // requires use of id
-      var newscroll = new IScroll('#chatBox-ul', {
-        mouseWheel: true,
-        scrollbars: true,
-        freeScroll: true,
-        mouseWheel: false,
-        disablePointer: true,
-        disableTouch: false,
-        disableMouse: false,
-        eventPassthrough: true,
-        bounce: false,
-        mouseWheel: false,
-        tap: true,
-        scrollX: true,
-        scrollY: false,
-        preventDefault: true
-      });
+      // var newscroll = new IScroll('#chatBox-ul', {
+      //   mouseWheel: true,
+      //   scrollbars: true,
+      //   freeScroll: true,
+      //   mouseWheel: false,
+      //   disablePointer: true,
+      //   disableTouch: false,
+      //   disableMouse: false,
+      //   eventPassthrough: true,
+      //   bounce: false,
+      //   mouseWheel: false,
+      //   tap: true,
+      //   scrollX: true,
+      //   scrollY: false,
+      //   preventDefault: true
       // });
-    })
+      // });
   </script>
   <script src="../lib/transition.js"></script>
   <script src="../lib/zoom.min.js"></script>
