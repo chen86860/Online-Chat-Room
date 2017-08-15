@@ -565,7 +565,7 @@ li[class="chatRoom-notice"] {
 }
 
 body {
-    overflow: auto !important;
+    overflow: scroll !important;
     -webkit-overflow-scrolling: touch !important;
 }
 
@@ -576,7 +576,7 @@ body {
     right: 0;
     top: 0;
     bottom: 0;
-    z-index: 19891100;
+    z-index: 198911000;
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
