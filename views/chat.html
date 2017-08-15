@@ -13,11 +13,11 @@
   <meta name="full-screen" content="yes">
   <meta name="x5-fullscreen" content="true">
   <link rel="stylesheet" type="text/css" href="../css/style.css">
-  <link rel="stylesheet" type="text/css" href="../css/zoom.css">
   <link rel="stylesheet" type="text/css" href="../css/iconfont.css">
   <script src="../lib/jquery.min.js"></script>
-
   <script src="../lib/socket.io.js"></script>
+  <script src="../lib/iscroll-lite.js"></script>
+  <script src="../lib/inobounce.min.js"></script>
   <script src="../lib/vue.js"></script>
 </head>
 
@@ -39,11 +39,11 @@
         <i class="iconfont icon-close" title="关闭"></i>
       </div>
     </div> -->
-      <div class="chatBox-content">
+      <div class="chatBox-content" id="chatBox-content">
         <div :style="{display:pull==0?'none':'flex'}" class="refresh">
           <p>{{refresh.tip}}</p>
         </div>
-        <div class="chatBox-content-main" :style="{'transform': 'translate3d(0,'+ pull +'px,0)'}">
+        <div class="chatBox-content-main" id="chatBox-ul" :style="{'transform': 'translate3d(0,'+ pull +'px,0)'}">
           <ul class="chatBox-ul">
             <li v-for='item in messages' :key="item.time" :class="{'chatRoom-notice': item.type==3,'chatRoom-me': item.type==1}">
               <template v-if='item.type==1'>
@@ -346,6 +346,7 @@
             this.scrollToBottom();
             this.sendMsg()
           }
+
         },
         sendMsg: function sendMsg() {
           var self = this;
@@ -529,11 +530,93 @@
       }
     });
 
-    window.onload = function () {
+    $(document).ready(function () {
       window.document.addEventListener('touchstart', function (e) {
         if (e.target.nodeName !== 'LI' && chat.showEmoji) chat.showEmoji = false;
       }, true);
-    };
+
+
+      // $('body').on('touchmove', function (e) {
+      //   var searchTerms = '.scroll, .scroll-y, .scroll-x',
+      //     $target = $(e.target),
+      //     parents = $target.parents(searchTerms);
+
+      //   if (parents.length || $target.hasClass(searchTerms)) {
+      //     // ignore as we want the scroll to happen
+      //     // (This is where we may need to check if at limit)
+      //   } else {
+      //     e.preventDefault();
+      //   }
+      // });
+      // var interval = null;
+      // var bfscrolltop = document.body.scrollTop;//获取软键盘唤起前浏览器滚动部分的高度
+      // $("textarea.textarea").focus(function () {//在这里‘input.inputframe’是我的底部输入栏的输入框，当它获取焦点时触发事件
+      //   interval = setInterval(function () {//设置一个计时器，时间设置与软键盘弹出所需时间相近
+      //     document.body.scrollTop = document.body.scrollHeight;//获取焦点后将浏览器内所有内容高度赋给浏览器滚动部分高度
+      //   }, 100)
+      // }).blur(function () {//设定输入框失去焦点时的事件
+      //   clearInterval(interval);//清除计时器
+      //   document.body.scrollTop = bfscrolltop; //将软键盘唤起前的浏览器滚动部分高度重新赋给改变后的高度
+      // });
+      // var textarea = document.querySelector('.textarea')
+      // textarea.addEventListener('foucus', function (e) {
+      //   setTimeout(function () {
+      //     e.scrollIntoViewIfNeeded()
+      //   }, 200)
+      // })
+
+
+      // $(document).on('focus', 'textarea', function () {
+      //   var target = this;
+      //   $('body').addClass('fixfixed');
+      //   setTimeout(function () {
+      //     target.scrollIntoViewIfNeeded();
+      //     console.log('scrollIntoViewIfNeeded');
+      //   }, 400);
+      // }).on('blur', 'textarea', function () {
+      //   $('body').removeClass('fixfixed');
+      // });
+
+
+      // var u = navigator.userAgent
+      // var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+
+      // if (isIOS) {
+      //   $(document).on("focus", "textarea", function () {
+      //     $('.textarea').addClass("fixfixed");
+      //   }).on("focusout", "textarea", function () {
+      //     $('.textarea').removeClass("fixfixed");
+      //   });
+      // }
+
+
+      // $(document).ready(function () {
+      //   // prevent all scroll //
+      //   $('body').on('touchmove', function (e) {
+      //     e.preventDefault();
+      //   });
+
+      // apply iscroll to scrolling element
+      // requires use of id
+      var newscroll = new IScroll('#chatBox-ul', {
+        mouseWheel: true,
+        scrollbars: true,
+        freeScroll: true,
+        mouseWheel: false,
+        disablePointer: true,
+        disableTouch: false,
+        disableMouse: false,
+        eventPassthrough: true,
+        bounce: false,
+        click: true,
+        mouseWheel: false,
+        tap: true,
+        scrollX: true,
+        scrollY: false,
+        preventDefault: true
+      });
+      // });
+    })
   </script>
   <script src="../lib/transition.js"></script>
   <script src="../lib/zoom.min.js"></script>

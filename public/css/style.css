@@ -29,17 +29,20 @@ body {
     font-size: 15px;
 }
 
-body.noscroll {
+
+/* body.noscroll {
     position: fixed;
     overflow: hidden;
-}
+} */
 
 ul {
     padding: 0;
     margin: 0;
-    overflow-y: scroll;
+    /* overflow-y: scroll; */
     height: 100%;
-    overflow-x: hidden;
+    /* overflow-x: hidden; */
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 ul::-webkit-scrollbar {
@@ -167,6 +170,7 @@ li {
     /*设置内嵌的元素在 3D 空间如何呈现：保留 3D*/
     -webkit-backface-visibility: hidden;
     background-color: #efefef;
+    -webkit-overflow-scrolling: touch;
 }
 
 .chatBox-content-main {
@@ -178,7 +182,8 @@ li {
     width: 100%;
     background-color: #efefef;
     -webkit-transition: all 200ms linear;
-    transition: all 200ms linear
+    -webkit-overflow-scrolling: touch;
+    transition: all 200ms linear;
 }
 
 
@@ -350,7 +355,7 @@ li[class="chatRoom-notice"] {
     bottom: 0;
     max-width: 640px;
     width: 100%;
-    z-index: 19891099;
+    z-index: 198910999;
 }
 
 .chatBox-content-footer .chatBox-toolbar {
@@ -612,4 +617,8 @@ body {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex
+}
+
+.fixfixed {
+    position: absolute;
 }

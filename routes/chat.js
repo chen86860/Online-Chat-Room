@@ -65,6 +65,7 @@ module.exports = function (io) {
   // });
   // 根据id创建聊天群
   let createSocket = (id) => {
+    let send_flag = true;
     socketArr.push(id)
     socketObj[id] = {
       onlineUsers: {},
@@ -187,7 +188,8 @@ module.exports = function (io) {
         });
 
         // 定时发单
-        if ((CONFIG.TIME_START_TIME - 1) < new Date().getHours() && new Date().getHours() < CONFIG.TIME_END_TIME) {
+        if (send_flag && (CONFIG.TIME_START_TIME - 1) < new Date().getHours() && new Date().getHours() < CONFIG.TIME_END_TIME) {
+          send_flag = false
           let send = setInterval(() => {
             $http.get(API.postOrder + id).then((res) => {
               res = JSON.parse(res)
@@ -198,6 +200,7 @@ module.exports = function (io) {
               } else {
                 clearInterval(send)
                 res.info = '发单结束'
+                // send_flag = true
               }
               res.src = "../img/me.jpg"
               res.id = new Date().getTime()
@@ -210,6 +213,8 @@ module.exports = function (io) {
               console.log('[', new Date(), ']', '定时发单失败,err', err)
             })
           }, CONFIG.TIME_INTERVAL)
+        } else {
+          send_flag = true
         }
       });
   }
