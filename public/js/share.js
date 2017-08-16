@@ -5,7 +5,7 @@
   }
   Class.prototype.share = function (share, redirect_url) {
     var ua = window.navigator.userAgent
-    if (!/micromessenger/ig.test(ua.toLowerCase)) return
+    if (!/micromessenger/ig.test(ua.toLowerCase())) return
     this.ajax("http://dev.adbats.com/tbk_dev/weixin/sign?redirect_url=" + redirect_url, 'get', {}, function (err, res) {
       if (err) {
         console.log(err)
