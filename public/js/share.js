@@ -17,7 +17,7 @@
           debug: false,
           appId: res.data.app_id,
           timestamp: res.data.timestamp || new Date().getTime(),
-          nonceStr: res.data.nonceStr,
+          nonceStr: res.data.nonce_str,
           signature: res.data.signature,
           jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage']
         })
