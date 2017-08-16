@@ -6,11 +6,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>聊天室管理后台</title>
-  <script src="js/vue.min.js"></script>
+  <!-- <script src="js/vue.min.js"></script> -->
+  <script src="../public/js/share.js"></script>
 </head>
 
 <body>
-
+  <script>
+    mui.ajax('http://dev.adbats.com/tbk_dev/chat/record/history/1111?page=1&size=10', 'get', {}, function (err, result) {
+      if (err) {
+        console.log(err)
+      } else {
+        console.log(result)
+      }
+    })
+  </script>
 </body>
 
 </html>
