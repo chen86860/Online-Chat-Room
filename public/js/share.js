@@ -6,7 +6,8 @@
   Class.prototype.share = function (share, redirect) {
     var ua = window.navigator.userAgent
     if (!/micromessenger/ig.test(ua.toLowerCase())) return
-    this.ajax("http://dev.adbats.com/tbk_dev/weixin/sign?redirect_url=" + redirect, 'get', {}, function (err, res) {
+    console.log('ress',redirect)
+    this.ajax("http://dev.adbats.com/tbk_dev/weixin/sign?redirect_url=" + redirect.link, 'get', {}, function (err, res) {
       if (err) {
         console.log(err)
       } else {
