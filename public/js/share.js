@@ -14,7 +14,7 @@
       dataType: 'jsonp',
       success: function (res) {
         wx.config({
-          debug: true,
+          debug: false,
           appId: res.data.app_id,
           timestamp: res.data.timestamp,
           nonceStr: res.data.nonce_str,
