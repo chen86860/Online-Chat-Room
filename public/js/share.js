@@ -15,7 +15,7 @@
       success: function (res) {
         wx.config({
           debug: false,
-          appId: res.data.appId,
+          appId: res.data.app_id,
           timestamp: res.data.timestamp || new Date().getTime(),
           nonceStr: res.data.nonceStr,
           signature: res.data.signature,
