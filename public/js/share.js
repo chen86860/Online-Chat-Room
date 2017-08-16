@@ -77,7 +77,7 @@
     if (xhr) {
       xhr.open(method, url, true);
       xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+      // xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
       xhr.onreadystatechange = function () {
         if (xhr.readyState == 4 && xhr.status == 200) {
           var responseData = xhr.responseText || false;
