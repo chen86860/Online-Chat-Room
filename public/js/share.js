@@ -14,9 +14,9 @@
       dataType: 'jsonp',
       success: function (res) {
         wx.config({
-          debug: false,
+          debug: true,
           appId: res.data.app_id,
-          timestamp: res.data.timestamp || new Date().getTime(),
+          timestamp: res.data.timestamp,
           nonceStr: res.data.nonce_str,
           signature: res.data.signature,
           jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage']
