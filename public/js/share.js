@@ -5,7 +5,7 @@
   }
   Class.prototype.share = function (options) {
     var share = options.share
-    var redirect = options.redirect
+    var redirect = options.redirect || window.location.href
     var ua = window.navigator.userAgent
     if (!/micromessenger/ig.test(ua.toLowerCase())) return
     $.ajax({
