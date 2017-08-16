@@ -255,7 +255,7 @@
 
         mui.share({
           share: share_info,
-          redirect: 'http://dev.adbats.com:3000/chat/room?group_id=1111&user_id=10085&nickname=jack&avatar=http://pic.jia360.com/ueditor/jsp/upload/201609/27/17601474946123480.png'
+          redirect: link
         })
       },
 
@@ -565,86 +565,6 @@
         }, 200);
       });
     });
-
-    // $('body').on('touchmove', function (e) {
-    //   var searchTerms = '.scroll, .scroll-y, .scroll-x',
-    //     $target = $(e.target),
-    //     parents = $target.parents(searchTerms);
-
-    //   if (parents.length || $target.hasClass(searchTerms)) {
-    //     // ignore as we want the scroll to happen
-    //     // (This is where we may need to check if at limit)
-    //   } else {
-    //     e.preventDefault();
-    //   }
-    // });
-    // var interval = null;
-    // var bfscrolltop = document.body.scrollTop;//获取软键盘唤起前浏览器滚动部分的高度
-    // $("textarea.textarea").focus(function () {//在这里‘input.inputframe’是我的底部输入栏的输入框，当它获取焦点时触发事件
-    //   interval = setInterval(function () {//设置一个计时器，时间设置与软键盘弹出所需时间相近
-    //     document.body.scrollTop = document.body.scrollHeight;//获取焦点后将浏览器内所有内容高度赋给浏览器滚动部分高度
-    //   }, 100)
-    // }).blur(function () {//设定输入框失去焦点时的事件
-    //   clearInterval(interval);//清除计时器
-    //   document.body.scrollTop = bfscrolltop; //将软键盘唤起前的浏览器滚动部分高度重新赋给改变后的高度
-    // });
-    // var textarea = document.querySelector('.textarea')
-    // textarea.addEventListener('foucus', function (e) {
-    //   setTimeout(function () {
-    //     e.scrollIntoViewIfNeeded()
-    //   }, 200)
-    // })
-
-
-    // $(document).on('focus', 'textarea', function () {
-    //   var target = this;
-    //   $('body').addClass('fixfixed');
-    //   setTimeout(function () {
-    //     target.scrollIntoViewIfNeeded();
-    //     console.log('scrollIntoViewIfNeeded');
-    //   }, 400);
-    // }).on('blur', 'textarea', function () {
-    //   $('body').removeClass('fixfixed');
-    // });
-
-
-    // var u = navigator.userAgent
-    // var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
-
-    // if (isIOS) {
-    //   $(document).on("focus", "textarea", function () {
-    //     $('.textarea').addClass("fixfixed");
-    //   }).on("focusout", "textarea", function () {
-    //     $('.textarea').removeClass("fixfixed");
-    //   });
-    // }
-
-
-    // $(document).ready(function () {
-    //   // prevent all scroll //
-    //   $('body').on('touchmove', function (e) {
-    //     e.preventDefault();
-    //   });
-
-    // apply iscroll to scrolling element
-    // requires use of id
-    // var newscroll = new IScroll('#chatBox-ul', {
-    //   mouseWheel: true,
-    //   scrollbars: true,
-    //   freeScroll: true,
-    //   mouseWheel: false,
-    //   disablePointer: true,
-    //   disableTouch: false,
-    //   disableMouse: false,
-    //   eventPassthrough: true,
-    //   bounce: false,
-    //   mouseWheel: false,
-    //   tap: true,
-    //   scrollX: true,
-    //   scrollY: false,
-    //   preventDefault: true
-    // });
-    // });
   </script>
 </body>
 

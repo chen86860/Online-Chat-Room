@@ -7,7 +7,7 @@ module.exports = {
     database: 'user'
   },
   // 服务器地址
-  host: 'http://dev.adbats.com/',
+  host: 'http://cps.adbats.com/',
   // 发单间隔
   TIME_INTERVAL: 1000 * 60 * 15,
   // 发单起止时间
