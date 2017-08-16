@@ -14,12 +14,13 @@
   <meta name="x5-fullscreen" content="true">
   <link rel="stylesheet" type="text/css" href="../css/style.css">
   <link rel="stylesheet" type="text/css" href="../css/iconfont.css">
-  <script src="../js/share.js"></script>
   <script src="../lib/jquery.min.js"></script>
   <script src="../lib/socket.io.js"></script>
   <script src="../lib/jweixin-1.2.0.js"></script>
   <script src="../lib/inobounce.min.js"></script>
   <script src="../lib/vue.js"></script>
+
+  <script src="../js/share.js"></script>
 </head>
 
 <body>
@@ -244,7 +245,7 @@
         this.downRefresh('.chatBox-content', 'y');
 
         // 微信分享
-        var link = window.location.origin + window.location.pathname + '?group_id' + this.group_id;
+        var link = window.location.origin + window.location.pathname + '?group_id=' + this.group_id;
         var share_info = {
           title: '布谷鸟优惠推荐',
           link: link,

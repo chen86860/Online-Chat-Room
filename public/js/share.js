@@ -8,11 +8,11 @@
     var redirect = options.redirect
     var ua = window.navigator.userAgent
     if (!/micromessenger/ig.test(ua.toLowerCase())) return
-    console.log('ress', redirect)
-    this.ajax("http://dev.adbats.com/tbk_dev/weixin/sign?redirect_url=" + redirect, 'get', {}, function (err, res) {
-      if (err) {
-        console.log(err)
-      } else {
+    $.ajax({
+      url: 'http://dev.adbats.com/tbk_dev/weixin/sign?redirect_url=' + redirect,
+      type: 'GET',
+      dataType: 'jsonp',
+      success: function (res) {
         wx.config({
           debug: false,
           appId: res.appId,
@@ -52,6 +52,7 @@
         wx.error(function (err) {
           console.log(err)
         })
+
       }
     })
   }
