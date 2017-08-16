@@ -16,7 +16,7 @@
         wx.config({
           debug: false,
           appId: res.appId,
-          timestamp: res.timestamp,
+          timestamp: res.timestamp || new Date().getTime(),
           nonceStr: res.nonceStr,
           signature: res.signature,
           jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage']
