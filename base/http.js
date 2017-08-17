@@ -21,7 +21,7 @@ exports.get = (url, params) => {
       }
     }, (res) => {
       if (res.statusCode !== 200 || res.statusCode > 300) {
-        reject(new Error('Error' + res.statusMessage))
+        reject(new Error(res.statusMessage))
       }
       let data = ''
       res.on('data', (chunk) => {

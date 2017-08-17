@@ -6,6 +6,3 @@ module.exports = {
   savePost: host + 'tbk_dev/chat/record/save/',
   getPost: host + 'tbk_dev/chat/record/history/'
 }
-
-
-'http://dev.adbats.com/tbk_dev/chat/order/find/0'
