@@ -29,7 +29,7 @@ app.use(cookieParser());
 
 app.use('/', index);
 app.use('/chat', chat)
-app.use('/chat/static', express.static('public'));
+app.use('/chat/chat/static', express.static('public'));
 // app.use('/chat', express.static('public'))
 
 // catch 404 and forward to error handler
