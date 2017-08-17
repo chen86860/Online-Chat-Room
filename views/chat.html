@@ -255,7 +255,7 @@
 
         mui.share({
           share: share_info,
-          redirect: link
+          redirect: window.location.href
         })
       },
 
@@ -550,11 +550,8 @@
     });
 
     $(document).ready(function () {
-
-
-
       window.document.addEventListener('touchstart', function (e) {
-        if (e.target.nodeName !== 'LI' && chat.showEmoji) chat.showEmoji = false;
+        if (e.target.nodeName !== 'LI' && e.target.nodeName !== 'SPAN') chat.showEmoji = false;
       }, true);
       var userInput = document.querySelector('.userInput');
       var pannel = document.querySelector('.chatBox-content-footer');

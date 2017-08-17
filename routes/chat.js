@@ -13,6 +13,7 @@ let sendRobot = {
   nickname: '',
   avatar: ''
 }
+let send_flag = true;
 
 module.exports = function (io) {
   router.get("/history/:group/:page/:size", (req, res) => {
@@ -55,7 +56,6 @@ module.exports = function (io) {
 
   // 根据id创建聊天群
   let createSocket = (id) => {
-    let send_flag = true;
     socketArr.push(id)
     socketObj[id] = {
       onlineUsers: {},
@@ -182,57 +182,62 @@ module.exports = function (io) {
           }, 0)
         });
 
-        // 定时发单
-        let send = setInterval(function () {
-          if (send_flag && (CONFIG.TIME_START_TIME - 1) < new Date().getHours() && new Date().getHours() < CONFIG.TIME_END_TIME) {
-            $http.get(API.postOrder + id).then((res) => {
-              res = JSON.parse(res)
-              // 有队列生成则一直发送
-              if (res.code === 200) {
-                res.img = res.data.image_url
-                res.cms_url = res.data.cms_url
-                res.info = res.data.content.replace(/(http.*)/ig, '<a class="link" href="$1">$1</a>').replace(/\n/ig, '<br>')
-                res.src = "../img/me.jpg"
-                res.id = 10000
-                res.name = '定时发单机器人'
-                res.time = new Date()
-                client.broadcast.emit('serverMsg', res)
-                client.emit('serverMsg', res)
+        // 链接只能被创建一次
+        if (send_flag) {
+          // 定时发单
+          let send = setInterval(function () {
+            send_flag = false
+            if (CONFIG.TIME_START_TIME - 1 < new Date().getHours() && new Date().getHours() < CONFIG.TIME_END_TIME) {
+              $http.get(API.postOrder + id).then((res) => {
+                res = JSON.parse(res)
+                // 有队列生成则一直发送
+                if (res.code === 200) {
+                  res.img = res.data.image_url
+                  res.cms_url = res.data.cms_url
+                  res.info = res.data.content.replace(/(http.*)/ig, '<a class="link" href="$1">$1</a>').replace(/\n/ig, '<br>')
+                  res.src = "../img/me.jpg"
+                  res.id = 10000
+                  res.name = '定时发单机器人'
+                  res.time = new Date()
+                  client.broadcast.emit('serverMsg', res)
+                  client.emit('serverMsg', res)
 
-                console.log('[', formatTime(new Date().getTime()), ']', '定时发单成功')
+                  console.log('[', formatTime(new Date().getTime()), ']', '定时发单成功')
 
-                // 保存找单图片
-                if (res.img) {
-                  $http.post(API.savePost + id, {
-                    user_id: res.id,
-                    nickname: res.name,
-                    head_portrait: res.src || '',
-                    content: res.img,
-                    content_type: 2,
-                    send_time: res.time
-                  }).then(() => {
-                    //保存正常发单记录
+                  // 保存找单图片
+                  if (res.img) {
                     $http.post(API.savePost + id, {
                       user_id: res.id,
                       nickname: res.name,
                       head_portrait: res.src || '',
-                      content: res.info + `<br ><a class='link' href="${res.cms_url}">查看更多</a>`,
-                      content_type: 1,
+                      content: res.img,
+                      content_type: 2,
                       send_time: res.time
+                    }).then(() => {
+                      //保存正常发单记录
+                      $http.post(API.savePost + id, {
+                        user_id: res.id,
+                        nickname: res.name,
+                        head_portrait: res.src || '',
+                        content: res.info + `<br ><a class='link' href="${res.cms_url}">查看更多</a>`,
+                        content_type: 1,
+                        send_time: res.time
+                      })
                     })
-                  })
+                  }
+                } else {
+                  console.log('[', formatTime(new Date().getTime()), ']', '发单队列为空')
                 }
-              } else {
-                console.log('[', formatTime(new Date().getTime()), ']', '发单队列为空')
-              }
-            }).catch(({ err }) => {
-              console.log('[', formatTime(new Date().getTime()), ']', '定时发单失败')
-            })
-          } else {
-            console.log('[', formatTime(new Date().getTime()), ']', '不在发单时间内')
-          }
-        }, CONFIG.TIME_INTERVAL)
+              }).catch(({ err }) => {
+                console.log('[', formatTime(new Date().getTime()), ']', '定时发单失败')
+              })
+            } else {
+              console.log('[', formatTime(new Date().getTime()), ']', '不在发单时间内')
+            }
+          }, CONFIG.TIME_INTERVAL)
+        }
       });
+
   }
 
 
