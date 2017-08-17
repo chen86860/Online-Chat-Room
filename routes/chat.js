@@ -182,67 +182,8 @@ module.exports = function (io) {
           }, 0)
         });
 
-        // // 定时发单
-        // if (send_flag && (CONFIG.TIME_START_TIME - 1) < new Date().getHours() && new Date().getHours() < CONFIG.TIME_END_TIME) {
-        //   send_flag = false
-        //   let send = setInterval(() => {
-        //     $http.get(API.postOrder + id).then((res) => {
-        //       res = JSON.parse(res)
-
-        //       if (res.code === 200) {
-        //         res.img = res.data.image_url
-        //         res.cms_url = res.data.cms_url
-        //         res.info = res.data.content.replace(/(http.*)/ig, '<a class="link" href="$1">$1</a>').replace(/\n/ig, '<br>')
-        //       } else {
-        //         clearInterval(send)
-        //         res.info = '发单结束'
-        //       }
-        //       res.src = "../img/me.jpg"
-        //       res.id = 10000
-        //       res.name = '定时发单机器人'
-        //       res.time = new Date()
-        //       client.broadcast.emit('serverMsg', res)
-        //       client.emit('serverMsg', res)
-        //       console.log('[', new Date(), ']', '定时发单成功')
-
-
-        //       //保存找单图片
-        //       if (res.img) {
-        //         $http.post(API.savePost + id, {
-        //           user_id: res.id,
-        //           nickname: res.name,
-        //           head_portrait: res.src || '',
-        //           content: res.img,
-        //           content_type: 2,
-        //           send_time: data.time
-        //         }).then(() => {
-        //           //保存正常发单记录
-        //           $http.post(API.savePost + id, {
-        //             user_id: res.id,
-        //             nickname: res.name,
-        //             head_portrait: res.src || '',
-        //             content: res.info + `<br ><a class='link' href="${res.cms_url}">查看更多</a>`,
-        //             content_type: 1,
-        //             send_time: data.time
-        //           }).then(() => {
-        //             console.log('[', formatTime(new Date().getTime()), ']', '保存聊天记录OK')
-        //           })
-        //           console.log('[', formatTime(new Date().getTime()), ']', '保存聊天记录OK')
-        //         }).catch((err) => {
-        //           console.log(err)
-        //         })
-        //       }
-
-        //     }).catch((err) => {
-        //       console.log('[', new Date(), ']', '定时发单失败,err', err)
-        //     })
-        //   }, CONFIG.TIME_INTERVAL)
-        // } else {
-        //   send_flag = true
-        // }
-
+        // 定时发单
         let send = setInterval(function () {
-          // 定时发单
           if (send_flag && (CONFIG.TIME_START_TIME - 1) < new Date().getHours() && new Date().getHours() < CONFIG.TIME_END_TIME) {
             $http.get(API.postOrder + id).then((res) => {
               res = JSON.parse(res)
