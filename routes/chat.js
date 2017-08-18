@@ -221,7 +221,7 @@ module.exports = function (io) {
                         content: res.info,
                         content_type: 1,
                         // 第二条紧接着的信息不需要发送时间
-                        // send_time: res.time
+                        send_time: ''
                       })
                     })
                   }
