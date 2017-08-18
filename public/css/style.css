@@ -213,7 +213,7 @@ li {
 }
 
 .chatRoom-user {
-    width: 80px !important;
+    min-width: 40px !important;
     display: inline-block;
 }
 
