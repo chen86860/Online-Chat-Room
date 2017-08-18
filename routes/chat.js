@@ -45,7 +45,7 @@ module.exports = function (io) {
         group_id: req.query.group_id,
         user_id: req.query.user_id || 0,
         nickname: req.query.nickname || '游客',
-        avatar: req.query.avatar || '../img/user.png'
+        avatar: req.query.avatar || '/chat/static/img/user.png'
       })
     } else {
       res.render('error', {
@@ -113,7 +113,7 @@ module.exports = function (io) {
               } else {
                 res.info = '无法找到相关商品，换个关键词再试试吧~'
               }
-              res.src = "../img/me.jpg"
+              res.src = "/chat/static/img/me.jpg"
               res.id = 10000;
               res.name = '发单机器人'
               client.broadcast.emit('serverMsg', res)
@@ -195,10 +195,10 @@ module.exports = function (io) {
                   res.img = res.data.image_url
                   res.cms_url = res.data.cms_url
                   res.info = res.data.content.replace(/(http.*)/ig, '<a class="link" href="$1">$1</a>').replace(/\n/ig, '<br>')
-                  res.src = "../img/me.jpg"
+                  res.src = "/chat/static/img/me.jpg"
                   res.id = 10000
                   res.name = '定时发单机器人'
-                  res.time = new Date()
+                  res.time = new Date().getTime()
                   client.broadcast.emit('serverMsg', res)
                   client.emit('serverMsg', res)
 

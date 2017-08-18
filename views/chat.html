@@ -18,18 +18,13 @@
   <script src="../chat/static/lib/socket.io.js"></script>
   <script src="../chat/static/lib/jweixin-1.2.0.js"></script>
   <script src="../chat/static/lib/inobounce.min.js"></script>
-  <script src="../chat/static/lib/vue.js"></script>
+  <script src="../chat/static/lib/vue.min.js"></script>
 
   <script src="../chat/static/js/share.js"></script>
 </head>
 
 <body>
-  <input type="hidden" name="" value="<%= group_id %>" id="group_id">
-  <input type="hidden" name="" value="<%= user_id %>" id="user_id">
-  <input type="hidden" name="" value="<%= nickname %>" id="nickname">
-  <input type="hidden" name="" value="<%= avatar %>" id="avatar">
   <div id="chat">
-
     <div class="chatBox">
       <!-- <div class="chatBox-title">
       <div class="chatBox-info">
@@ -113,9 +108,11 @@
       </div>
     </div>
   </div>
+  <input type="hidden" name="" value="<%= group_id %>" id="group_id">
+  <input type="hidden" name="" value="<%= user_id %>" id="user_id">
+  <input type="hidden" name="" value="<%= nickname %>" id="nickname">
+  <input type="hidden" name="" value="<%= avatar %>" id="avatar">
   <script>
-    'use strict';
-
     'use strict';
 
     var group_id = document.getElementById('group_id').value;

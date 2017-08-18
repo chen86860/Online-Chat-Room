@@ -195,6 +195,7 @@ li {
     min-height: 68px;
     margin: 10px 0 10px;
     overflow: hidden;
+    margin-right: 50px;
 }
 
 .chatBox-content-main .chatRoom-user {
@@ -263,20 +264,11 @@ cite i {
     color: #fff;
 }
 
-cite span {
-    /* position: absolute;
-    left: 60px; */
-}
-
-.chatRoom-me cite span {}
-
-
 /*自己发言样式*/
 
 .chatRoom-me {
     text-align: right;
-    /* padding-left: 0; */
-    /* padding-right: 60px; */
+    margin: 10px 0 10px 50px !important;
 }
 
 .chatRoom-me-wrap {
