@@ -9,7 +9,7 @@
     var ua = window.navigator.userAgent
     if (!/micromessenger/ig.test(ua.toLowerCase())) return
     $.ajax({
-      url: 'http://dev.adbats.com/tbk_dev/weixin/sign?redirect_url=' + encodeURIComponent(redirect),
+      url: 'http://cps.adbats.com/tbk_dev/weixin/sign?redirect_url=' + encodeURIComponent(redirect),
       type: 'GET',
       dataType: 'jsonp',
       success: function (res) {
