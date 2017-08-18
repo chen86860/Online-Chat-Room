@@ -193,7 +193,6 @@ module.exports = function (io) {
                 // 有队列生成则一直发送
                 if (res.code === 200) {
                   res.img = res.data.image_url
-                  res.cms_url = res.data.cms_url
                   res.info = res.data.content.replace(/(http.*)/ig, '<a class="link" href="$1">$1</a>').replace(/\n/ig, '<br>')
                   res.src = "/chat/static/img/me.jpg"
                   res.id = 10000
@@ -219,7 +218,7 @@ module.exports = function (io) {
                         user_id: res.id,
                         nickname: res.name,
                         head_portrait: res.src || '',
-                        content: res.info + `<br ><a class='link' href="${res.cms_url}">查看更多</a>`,
+                        content: res.info,
                         content_type: 1,
                         // 第二条紧接着的信息不需要发送时间
                         // send_time: res.time
