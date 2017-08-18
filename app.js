@@ -14,8 +14,8 @@ app.io = io;
 var index = require('./routes/index');
 var users = require('./routes/users');
 var chat = require('./routes/chat')(io)
-// view engine setup
 
+// view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.engine('.html', require('ejs').__express);
 app.set('view engine', 'html');
@@ -29,9 +29,7 @@ app.use(cookieParser());
 
 app.use('/', index);
 app.use('/chat', chat)
-app.use('/chat/chat/static', express.static('public'));
-// app.use('/chat', express.static('public'))
-
+app.use('/chat/static', express.static(path.join(__dirname, 'public')))
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   var err = new Error('Not Found');
