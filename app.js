@@ -13,7 +13,8 @@ var io = socket_io({
     'flashsocket',
     'htmlfile',
     'xhr-polling',
-    'jsonp-polling'
+    'jsonp-polling',
+    'polling'
   ],
   upgrade: true
 })
