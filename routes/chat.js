@@ -43,8 +43,8 @@ module.exports = function (io) {
       if (!socketArr.includes(req.query.group_id)) createSocket(req.query.group_id)
       res.render("chat", {
         group_id: req.query.group_id,
-        user_id: req.query.user_id || 0,
-        nickname: req.query.nickname || '游客',
+        user_id: req.query.user_id || 'y' + Math.ceil(Math.random() * 10000),
+        nickname: req.query.nickname || '游客' + Math.ceil(Math.random() * 10000),
         avatar: req.query.avatar || '/chat/static/img/user.png'
       })
     } else {
@@ -84,7 +84,7 @@ module.exports = function (io) {
           client.broadcast.emit("serverMsg", data);
 
           // 不保存游客聊天记录
-          if (data.id != 0) {
+          if (!/^y.*?/.test(data.id)) {
             // 保存发单关键词或聊天记录
             $http.post(API.savePost + id, {
               user_id: data.id,
