@@ -195,7 +195,6 @@ li {
     min-height: 68px;
     margin: 10px 0 10px;
     overflow: hidden;
-    margin-right: 50px;
 }
 
 .chatBox-content-main .chatRoom-user {
@@ -211,6 +210,11 @@ li {
     width: 40px;
     height: 40px;
     border-radius: 100%;
+}
+
+.chatRoom-user {
+    width: 80px !important;
+    display: inline-block;
 }
 
 .chatRoom-user-text {
@@ -264,17 +268,23 @@ cite i {
     color: #fff;
 }
 
+
 /*自己发言样式*/
 
 .chatRoom-me {
     text-align: right;
-    margin: 10px 0 10px 50px !important;
 }
 
 .chatRoom-me-wrap {
     -webkit-box-pack: end;
     -ms-flex-pack: end;
     justify-content: flex-end;
+    margin-left: 50px;
+    margin-right: 0 !important;
+}
+
+.chatRoom-me-wrap .chatRoom-user {
+    width: 40px !important;
 }
 
 .chatRoom-me .chatRoom-user {
@@ -608,7 +618,8 @@ body {
 .chatRoom-wrap {
     display: -webkit-box;
     display: -ms-flexbox;
-    display: flex
+    display: flex;
+    margin-right: 50px;
 }
 
 .fixfixed {

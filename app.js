@@ -7,7 +7,16 @@ var bodyParser = require('body-parser');
 var nunjucks = require('nunjucks')
 
 var socket_io = require('socket.io')
-var io = socket_io({ transports: ['websocket'], upgrade: false })
+var io = socket_io({
+  transports: [
+    'websocket',
+    'flashsocket',
+    'htmlfile',
+    'xhr-polling',
+    'jsonp-polling'
+  ],
+  upgrade: true
+})
 var app = express();
 app.io = io;
 

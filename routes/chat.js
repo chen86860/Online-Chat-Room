@@ -221,7 +221,8 @@ module.exports = function (io) {
                         head_portrait: res.src || '',
                         content: res.info + `<br ><a class='link' href="${res.cms_url}">查看更多</a>`,
                         content_type: 1,
-                        send_time: res.time
+                        // 第二条紧接着的信息不需要发送时间
+                        // send_time: res.time
                       })
                     })
                   }
