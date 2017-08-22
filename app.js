@@ -11,7 +11,7 @@ var io = socket_io({
   transports: [
     'websocket'
   ],
-  upgrade: false,
+  upgrade: true,
 })
 
 var app = express();
