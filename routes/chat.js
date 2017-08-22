@@ -257,7 +257,7 @@ module.exports = function (io) {
                         send_time: ''
                       })
                     }).catch(err => {
-                      log('wan', `[${gid}]定时发单记录保存失败,${err}`)
+                      log('wan', `[${gid}]定时发单记录保存失败,${err || ''}`)
                     })
                   }
                 } else {
@@ -265,7 +265,7 @@ module.exports = function (io) {
                   console.log('[', formatTime(new Date().getTime()), ']', `[${gid}]发单队列为空`)
                 }
               }).catch(({ err }) => {
-                log('info', `[${gid}]定时发单失败`)
+                log('info', `[${gid}]定时发单失败,${err || ''}`)
                 console.log('[', formatTime(new Date().getTime()), ']', `[${gid}]定时发单失败`)
               })
             } else {
