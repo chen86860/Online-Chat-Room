@@ -116,9 +116,7 @@
     'use strict';
 
     var group_id = document.getElementById('group_id').value;
-    var socket = io('http://118.31.112.250:3000/', {
-      forceNew: true
-    }).connect('/' + group_id);
+    var socket = io().connect('/' + group_id);
     var timer = null;
     var isShowTime = false;
     var timerCount = 0;
