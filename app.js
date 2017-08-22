@@ -9,14 +9,9 @@ var nunjucks = require('nunjucks')
 var socket_io = require('socket.io')
 var io = socket_io({
   transports: [
-    'websocket',
-    'flashsocket',
-    'htmlfile',
-    'xhr-polling',
-    'jsonp-polling',
-    'polling'
+    'websocket'
   ],
-  upgrade: true
+  upgrade: false
 })
 var app = express();
 app.io = io;
