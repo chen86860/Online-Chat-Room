@@ -234,7 +234,7 @@ module.exports = function (io) {
                   })
                   // client.broadcast.emit('serverMsg', res)
                   // client.emit('serverMsg', res)
-                  log('info', '定时发单成功')
+                  log('info', `[${gid}]定时发单成功`)
                   console.log('[', formatTime(new Date().getTime()), ']', '定时发单成功')
                   // 保存找单图片
                   if (res.img) {
@@ -256,19 +256,21 @@ module.exports = function (io) {
                         // 第二条紧接着的信息不需要发送时间
                         send_time: ''
                       })
+                    }).catch(err => {
+                      log('wan', `[${gid}]定时发单记录保存失败,${err}`)
                     })
                   }
                 } else {
-                  log('info', '发单队列为空')
-                  console.log('[', formatTime(new Date().getTime()), ']', '发单队列为空')
+                  log('info', `[${gid}]发单队列为空`)
+                  console.log('[', formatTime(new Date().getTime()), ']', `[${gid}]发单队列为空`)
                 }
               }).catch(({ err }) => {
-                log('info', '定时发单失败')
-                console.log('[', formatTime(new Date().getTime()), ']', '定时发单失败')
+                log('info', `[${gid}]定时发单失败`)
+                console.log('[', formatTime(new Date().getTime()), ']', `[${gid}]定时发单失败`)
               })
             } else {
-              log('不在发单时间内')
-              console.log('[', formatTime(new Date().getTime()), ']', '不在发单时间内')
+              log(`[${gid}]不在发单时间内`)
+              console.log('[', formatTime(new Date().getTime()), ']', `[${gid}]不在发单时间内`)
             }
           }, CONFIG.TIME_INTERVAL)
         }
