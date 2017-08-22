@@ -11,8 +11,10 @@ var io = socket_io({
   transports: [
     'websocket'
   ],
-  upgrade: false
+  upgrade: false,
+  "serveClient": false
 })
+
 var app = express();
 app.io = io;
 
