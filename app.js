@@ -12,7 +12,6 @@ var io = socket_io({
     'websocket'
   ],
   upgrade: false,
-  "serveClient": false
 })
 
 var app = express();
