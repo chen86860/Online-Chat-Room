@@ -116,7 +116,9 @@
     'use strict';
 
     var group_id = document.getElementById('group_id').value;
-    var socket = io.connect('/' + group_id);
+    var socket = io('http://118.31.112.250:3000/', {
+      forceNew: true
+    }).connect('/' + group_id);
     var timer = null;
     var isShowTime = false;
     var timerCount = 0;
@@ -558,6 +560,15 @@
           pannel.scrollIntoViewIfNeeded();
         }, 200);
       });
+
+
+      var _hmt = [];
+      (function () {
+        var hm = document.createElement('script')
+        hm.src = 'https://hm.baidu.com/hm.js?5b55d78c98384a0d9ccc77098d4bfcf3'
+        var s = document.getElementsByTagName('script')[0]
+        s.parentNode.insertBefore(hm, s)
+      })()
     });
   </script>
 </body>

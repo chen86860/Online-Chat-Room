@@ -215,6 +215,7 @@ module.exports = function (io) {
         // 链接只能被创建一次
         if (send_flag) {
           send_flag = false
+          log('msg', `${gid}定时任务已创建`)
           // 定时发单
           sendbot.timer = setInterval(function () {
             if (CONFIG.TIME_START_TIME - 1 < new Date().getHours() && new Date().getHours() < CONFIG.TIME_END_TIME) {
