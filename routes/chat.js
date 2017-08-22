@@ -5,15 +5,43 @@ const $http = require('../base/http')
 const dbHandler = require('../base/mysql')
 const API = require('../config/api')
 const CONFIG = require('../config/conf')
+const log = require('../base/log').log
+
 let socketArr = []
 let socketObj = {}
 let noop = () => { }
-let sendRobot = {
-  user_id: null,
-  nickname: '',
-  avatar: ''
-}
 let send_flag = true;
+
+var sendBot = function () {
+  var o = {
+    timer: null
+  }
+  return o
+}
+var Room = function () {
+  var o = {
+    room: {},
+    users: {},
+  }
+
+  o.add = function (gid, id, client) {
+    if (Object.prototype.toString.apply(o.room[gid]) !== '[object Array]') {
+      o.room[gid] = []
+    }
+    o.room[gid].push({
+      id: id,
+      client: client,
+    })
+
+  }
+  o.del = function (gid, id) {
+    let index = o.room[gid].findIndex(e => e.id === id)
+    o.room[gid].splice(index, 1)
+  }
+  return o
+}
+var room = Room()
+var sendbot = sendBot()
 
 module.exports = function (io) {
   router.get("/history/:group/:page/:size", (req, res) => {
@@ -55,38 +83,24 @@ module.exports = function (io) {
   })
 
   // 根据id创建聊天群
-  let createSocket = (id) => {
-    socketArr.push(id)
-    socketObj[id] = {
-      onlineUsers: {},
-      onlineCount: 0
-    }
-    io.of('/' + id)
+  let createSocket = (gid) => {
+    socketArr.push(gid)
+    io.of('/' + gid)
       .on("connection", client => {
         client.on("login", user => {
           client.uid = user.id;
-          user.name = user.name
-          if (socketObj[id] && socketObj[id].onlineUsers && !socketObj[id].onlineUsers.hasOwnProperty(client.uid)) {
-            console.log('[', formatTime(new Date().getTime()), ']', 'Reg', user)
-            socketObj[id].onlineUsers[client.uid] = {
-              name: user.name,
-              src: user.avatar
-            };
-          }
-          // client.broadcast.emit("welcome", user);
-          // client.broadcast.emit('updateCount', ++socketObj[id].onlineCount)
-          console.log('[', formatTime(new Date().getTime()), ']', user.name, " 加入聊天室")
+          client.uname = user.name;
+          room.add(gid, user.id, client)
+          log('info', user.name + ' 加入聊天室')
         });
         client.on("newMsg", data => {
-          // data.name = socketObj[id].onlineUsers[data.id]["name"] || ''
-          // data.src = socketObj[id].onlineUsers[data.id]["src"] || ''
           client.emit("serverMsg", data);
           client.broadcast.emit("serverMsg", data);
 
           // 不保存游客聊天记录
           if (!/^y.*?/.test(data.id)) {
             // 保存发单关键词或聊天记录
-            $http.post(API.savePost + id, {
+            $http.post(API.savePost + gid, {
               user_id: data.id,
               nickname: data.name,
               head_portrait: data.src,
@@ -94,15 +108,22 @@ module.exports = function (io) {
               content_type: data.type || 1,
               send_time: data.time
             }).then(() => {
-              console.log('[', formatTime(new Date().getTime()), ']', '保存聊天记录OK')
+              log('聊天记录_[USER]', JSON.stringify({
+                user_id: data.id,
+                nickname: data.name,
+                head_portrait: data.src,
+                content: data.info,
+                content_type: data.type || 1,
+                send_time: data.time
+              }))
             }).catch(() => {
-              console.log('[', formatTime(new Date().getTime()), ']', '保存聊天记录BAD')
+              log('聊天记录BAD', '')
             })
           }
 
           // 匹配找单关键字，请求找单
           if (/^找[^.]{1,}/i.test(data.info)) {
-            $http.post(API.getOrder + id, {
+            $http.post(API.getOrder + gid, {
               keyword: data.info.slice(1).replace(/\n/, '')
             }).then(res => {
               res = JSON.parse(res)
@@ -121,7 +142,7 @@ module.exports = function (io) {
 
               //保存找单图片
               if (res.img) {
-                $http.post(API.savePost + id, {
+                $http.post(API.savePost + gid, {
                   user_id: res.id,
                   nickname: res.name,
                   head_portrait: res.src || '',
@@ -130,7 +151,7 @@ module.exports = function (io) {
                   send_time: data.time
                 }).then(() => {
                   //保存正常发单记录
-                  $http.post(API.savePost + id, {
+                  $http.post(API.savePost + gid, {
                     user_id: res.id,
                     nickname: res.name,
                     head_portrait: res.src || '',
@@ -138,15 +159,29 @@ module.exports = function (io) {
                     content_type: 1,
                     send_time: data.time
                   }).then(() => {
-                    console.log('[', formatTime(new Date().getTime()), ']', '保存聊天记录OK')
+                    log('聊天记录_[SYS_1]', JSON.stringify({
+                      user_id: res.id,
+                      nickname: res.name,
+                      head_portrait: res.src || '',
+                      content: res.info + `<br ><a class='link' href="${res.cms_url}">查看更多</a>`,
+                      content_type: 1,
+                      send_time: data.time
+                    }))
                   })
-                  console.log('[', formatTime(new Date().getTime()), ']', '保存聊天记录OK')
+                  log('聊天记录_[SYS_2]', JSON.stringify({
+                    user_id: res.id,
+                    nickname: res.name,
+                    head_portrait: res.src || '',
+                    content: res.img,
+                    content_type: 2,
+                    send_time: data.time
+                  }))
                 }).catch((err) => {
                   console.log(err)
                 })
               } else {
                 //保存正常发单记录
-                $http.post(API.savePost + id, {
+                $http.post(API.savePost + gid, {
                   user_id: res.id || '',
                   nickname: res.name || '',
                   head_portrait: res.src || '',
@@ -154,41 +189,36 @@ module.exports = function (io) {
                   content_type: 1,
                   send_time: data.time
                 }).then(() => {
-                  console.log('[', formatTime(new Date().getTime()), ']', '保存聊天记录OK')
+                  log('聊天记录_[USER]', JSON.stringify({
+                    user_id: res.id || '',
+                    nickname: res.name || '',
+                    head_portrait: res.src || '',
+                    content: res.cms_url ? res.info + `<br ><a class='link' href="${res.cms_url}">查看更多</a>` : res.info,
+                    content_type: 1,
+                    send_time: data.time
+                  }))
                 })
               }
 
             }).catch(err => {
-              console.log('err in get order', err)
+              ('err', 'get order' + JSON.stringify(err))
             })
           }
 
         });
 
         client.on("disconnect", function () {
-          let disconnect = true
-          setTimeout(() => {
-            if (disconnect && socketObj[id].onlineUsers.hasOwnProperty(client.uid)) {
-              client.disconnect()
-              var msg = socketObj[id].onlineUsers[client.uid];
-              delete socketObj[id].onlineUsers[client.uid];
-              client.broadcast.emit('updateCount', socketObj[id].onlineCount)
-              if (--socketObj[id].onlineCount === 0) {
-                delete socketObj[id]
-              }
-              // client.broadcast.emit("logout", msg);
-              console.log(msg.name + " 离开聊天室");
-            }
-          }, 0)
+          room.del(gid, client.uid)
+          log('info', client.uname + " 离开聊天室");
         });
 
         // 链接只能被创建一次
         if (send_flag) {
+          send_flag = false
           // 定时发单
-          let send = setInterval(function () {
-            send_flag = false
+          sendbot.timer = setInterval(function () {
             if (CONFIG.TIME_START_TIME - 1 < new Date().getHours() && new Date().getHours() < CONFIG.TIME_END_TIME) {
-              $http.get(API.postOrder + id).then((res) => {
+              $http.get(API.postOrder + gid).then((res) => {
                 res = JSON.parse(res)
                 // 有队列生成则一直发送
                 if (res.code === 200) {
@@ -198,14 +228,16 @@ module.exports = function (io) {
                   res.id = 10000
                   res.name = '定时发单机器人'
                   res.time = new Date().getTime()
-                  client.broadcast.emit('serverMsg', res)
-                  client.emit('serverMsg', res)
-
+                  room.room[gid].forEach(e => {
+                    e.client.emit('serverMsg', res)
+                  })
+                  // client.broadcast.emit('serverMsg', res)
+                  // client.emit('serverMsg', res)
+                  log('info', '定时发单成功')
                   console.log('[', formatTime(new Date().getTime()), ']', '定时发单成功')
-
                   // 保存找单图片
                   if (res.img) {
-                    $http.post(API.savePost + id, {
+                    $http.post(API.savePost + gid, {
                       user_id: res.id,
                       nickname: res.name,
                       head_portrait: res.src || '',
@@ -214,7 +246,7 @@ module.exports = function (io) {
                       send_time: res.time
                     }).then(() => {
                       //保存正常发单记录
-                      $http.post(API.savePost + id, {
+                      $http.post(API.savePost + gid, {
                         user_id: res.id,
                         nickname: res.name,
                         head_portrait: res.src || '',
@@ -226,12 +258,15 @@ module.exports = function (io) {
                     })
                   }
                 } else {
+                  log('info', '发单队列为空')
                   console.log('[', formatTime(new Date().getTime()), ']', '发单队列为空')
                 }
               }).catch(({ err }) => {
+                log('info', '定时发单失败')
                 console.log('[', formatTime(new Date().getTime()), ']', '定时发单失败')
               })
             } else {
+              log('不在发单时间内')
               console.log('[', formatTime(new Date().getTime()), ']', '不在发单时间内')
             }
           }, CONFIG.TIME_INTERVAL)
