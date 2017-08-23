@@ -215,7 +215,7 @@ module.exports = function (io) {
       });
 
     // 无定时任务则创建
-    if (!room.timed()) {
+    if (!(room.timed())) {
       room.add_timer(gid)
       log('msg', `***[${gid}] 定时任务已创建***`)
       // 定时发单
@@ -267,7 +267,7 @@ module.exports = function (io) {
               console.log('[', formatTime(new Date().getTime()), ']', `[${gid}]发单队列为空`)
             }
           }).catch(({ err }) => {
-            log('info', `[${gid}]定时发单失败,${err || ''}`)
+            log('info', `[${gid}]定时发单失败 ${err || ''}`)
             console.log('[', formatTime(new Date().getTime()), ']', `[${gid}]定时发单失败`)
           })
         } else {
