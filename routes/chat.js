@@ -38,6 +38,7 @@ var Room = function () {
   o.timed = function (gid) {
     return o.timer.includes(gid)
   }
+
   return o
 }
 var room = Room()
@@ -91,6 +92,7 @@ module.exports = function (io) {
         client.on("login", user => {
           client.uid = user.id;
           client.uname = user.name;
+          console.log('<-----------CLIENT--------->', client)
           room.add(gid, user.id, client)
           log('info', user.name + ' 加入聊天室')
         });
@@ -212,70 +214,132 @@ module.exports = function (io) {
           room.del(gid, client.uid)
           log('info', client.uname + " 离开聊天室");
         });
+        if (!(room.timed())) {
+          room.add_timer(gid)
+          log('msg', `***[${gid}] 定时任务已创建***`)
+          // 定时发单
+          setInterval(function () {
+            if (CONFIG.TIME_START_TIME - 1 < new Date().getHours() && new Date().getHours() < CONFIG.TIME_END_TIME) {
+              $http.get(API.postOrder + gid).then((res) => {
+                res = JSON.parse(res)
+                // 有队列生成则一直发送
+                if (res.code === 200) {
+                  res.img = res.data.image_url
+                  res.info = res.data.content.replace(/(http.*)/ig, '<a class="link" href="$1">$1</a>').replace(/\n/ig, '<br>')
+                  res.src = "/chat/static/img/me.jpg"
+                  res.id = 10000
+                  res.name = '定时发单机器人'
+                  res.time = new Date().getTime()
+                  // room.room[gid].forEach(e => {
+                  //   e.client.emit('serverMsg', res)
+                  // })
+                  client.broadcast.emit('serverMsg', res)
+                  // client.broadcast.emit('serverMsg', res)
+                  // client.emit('serverMsg', res)
+                  log('info', `[${gid}]定时发单成功`)
+                  console.log('[', formatTime(new Date().getTime()), ']', '定时发单成功')
+                  // 保存找单图片
+                  if (res.img) {
+                    $http.post(API.savePost + gid, {
+                      user_id: res.id,
+                      nickname: res.name,
+                      head_portrait: res.src || '',
+                      content: res.img,
+                      content_type: 2,
+                      send_time: res.time
+                    }).then(() => {
+                      //保存正常发单记录
+                      $http.post(API.savePost + gid, {
+                        user_id: res.id,
+                        nickname: res.name,
+                        head_portrait: res.src || '',
+                        content: res.info,
+                        content_type: 1,
+                        // 第二条紧接着的信息不需要发送时间
+                        send_time: ''
+                      })
+                    }).catch(err => {
+                      log('wan', `[${gid}]定时发单记录保存失败,${err || ''}`)
+                    })
+                  }
+                } else {
+                  log('info', `[${gid}]发单队列为空`)
+                  console.log('[', formatTime(new Date().getTime()), ']', `[${gid}]发单队列为空`)
+                }
+              }).catch(({ err }) => {
+                log('info', `[${gid}]定时发单失败 ${err || ''}`)
+                console.log('[', formatTime(new Date().getTime()), ']', `[${gid}]定时发单失败`)
+              })
+            } else {
+              log(`[${gid}]不在发单时间内`)
+              console.log('[', formatTime(new Date().getTime()), ']', `[${gid}]不在发单时间内`)
+            }
+          }, CONFIG.TIME_INTERVAL)
+        }
       });
 
     // 无定时任务则创建
-    if (!(room.timed())) {
-      room.add_timer(gid)
-      log('msg', `***[${gid}] 定时任务已创建***`)
-      // 定时发单
-      setInterval(function () {
-        if (CONFIG.TIME_START_TIME - 1 < new Date().getHours() && new Date().getHours() < CONFIG.TIME_END_TIME) {
-          $http.get(API.postOrder + gid).then((res) => {
-            res = JSON.parse(res)
-            // 有队列生成则一直发送
-            if (res.code === 200) {
-              res.img = res.data.image_url
-              res.info = res.data.content.replace(/(http.*)/ig, '<a class="link" href="$1">$1</a>').replace(/\n/ig, '<br>')
-              res.src = "/chat/static/img/me.jpg"
-              res.id = 10000
-              res.name = '定时发单机器人'
-              res.time = new Date().getTime()
-              room.room[gid].forEach(e => {
-                e.client.emit('serverMsg', res)
-              })
-              // client.broadcast.emit('serverMsg', res)
-              // client.emit('serverMsg', res)
-              log('info', `[${gid}]定时发单成功`)
-              console.log('[', formatTime(new Date().getTime()), ']', '定时发单成功')
-              // 保存找单图片
-              if (res.img) {
-                $http.post(API.savePost + gid, {
-                  user_id: res.id,
-                  nickname: res.name,
-                  head_portrait: res.src || '',
-                  content: res.img,
-                  content_type: 2,
-                  send_time: res.time
-                }).then(() => {
-                  //保存正常发单记录
-                  $http.post(API.savePost + gid, {
-                    user_id: res.id,
-                    nickname: res.name,
-                    head_portrait: res.src || '',
-                    content: res.info,
-                    content_type: 1,
-                    // 第二条紧接着的信息不需要发送时间
-                    send_time: ''
-                  })
-                }).catch(err => {
-                  log('wan', `[${gid}]定时发单记录保存失败,${err || ''}`)
-                })
-              }
-            } else {
-              log('info', `[${gid}]发单队列为空`)
-              console.log('[', formatTime(new Date().getTime()), ']', `[${gid}]发单队列为空`)
-            }
-          }).catch(({ err }) => {
-            log('info', `[${gid}]定时发单失败 ${err || ''}`)
-            console.log('[', formatTime(new Date().getTime()), ']', `[${gid}]定时发单失败`)
-          })
-        } else {
-          log(`[${gid}]不在发单时间内`)
-          console.log('[', formatTime(new Date().getTime()), ']', `[${gid}]不在发单时间内`)
-        }
-      }, CONFIG.TIME_INTERVAL)
-    }
+    // if (!(room.timed())) {
+    //   room.add_timer(gid)
+    //   log('msg', `***[${gid}] 定时任务已创建***`)
+    //   // 定时发单
+    //   setInterval(function () {
+    //     if (CONFIG.TIME_START_TIME - 1 < new Date().getHours() && new Date().getHours() < CONFIG.TIME_END_TIME) {
+    //       $http.get(API.postOrder + gid).then((res) => {
+    //         res = JSON.parse(res)
+    //         // 有队列生成则一直发送
+    //         if (res.code === 200) {
+    //           res.img = res.data.image_url
+    //           res.info = res.data.content.replace(/(http.*)/ig, '<a class="link" href="$1">$1</a>').replace(/\n/ig, '<br>')
+    //           res.src = "/chat/static/img/me.jpg"
+    //           res.id = 10000
+    //           res.name = '定时发单机器人'
+    //           res.time = new Date().getTime()
+    //           room.room[gid].forEach(e => {
+    //             e.client.emit('serverMsg', res)
+    //           })
+    //           // client.broadcast.emit('serverMsg', res)
+    //           // client.emit('serverMsg', res)
+    //           log('info', `[${gid}]定时发单成功`)
+    //           console.log('[', formatTime(new Date().getTime()), ']', '定时发单成功')
+    //           // 保存找单图片
+    //           if (res.img) {
+    //             $http.post(API.savePost + gid, {
+    //               user_id: res.id,
+    //               nickname: res.name,
+    //               head_portrait: res.src || '',
+    //               content: res.img,
+    //               content_type: 2,
+    //               send_time: res.time
+    //             }).then(() => {
+    //               //保存正常发单记录
+    //               $http.post(API.savePost + gid, {
+    //                 user_id: res.id,
+    //                 nickname: res.name,
+    //                 head_portrait: res.src || '',
+    //                 content: res.info,
+    //                 content_type: 1,
+    //                 // 第二条紧接着的信息不需要发送时间
+    //                 send_time: ''
+    //               })
+    //             }).catch(err => {
+    //               log('wan', `[${gid}]定时发单记录保存失败,${err || ''}`)
+    //             })
+    //           }
+    //         } else {
+    //           log('info', `[${gid}]发单队列为空`)
+    //           console.log('[', formatTime(new Date().getTime()), ']', `[${gid}]发单队列为空`)
+    //         }
+    //       }).catch(({ err }) => {
+    //         log('info', `[${gid}]定时发单失败 ${err || ''}`)
+    //         console.log('[', formatTime(new Date().getTime()), ']', `[${gid}]定时发单失败`)
+    //       })
+    //     } else {
+    //       log(`[${gid}]不在发单时间内`)
+    //       console.log('[', formatTime(new Date().getTime()), ']', `[${gid}]不在发单时间内`)
+    //     }
+    //   }, CONFIG.TIME_INTERVAL)
+    // }
   }
 
   // 后台登录
