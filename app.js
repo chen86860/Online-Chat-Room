@@ -12,6 +12,7 @@ var io = socket_io({
     'websocket'
   ],
   upgrade: true,
+  path: '/chat/socket.io'
 })
 
 var app = express();

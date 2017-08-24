@@ -2,7 +2,6 @@ const app = require("express");
 const router = app.Router();
 
 const $http = require('../base/http')
-const dbHandler = require('../base/mysql')
 const API = require('../config/api')
 const CONFIG = require('../config/conf')
 const log = require('../base/log').log

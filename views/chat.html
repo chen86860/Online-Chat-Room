@@ -113,10 +113,10 @@
   <input type="hidden" name="" value="<%= nickname %>" id="nickname">
   <input type="hidden" name="" value="<%= avatar %>" id="avatar">
   <script>
-    'use strict';
-
     var group_id = document.getElementById('group_id').value
-    var socket = io.connect('http://118.31.112.250:3000' + '/' + group_id);
+    var socket = io('http://118.31.112.250:3000' + '/' + group_id, {
+      path: '/chat/socket.io'
+    });
 
     var timer = null;
     var isShowTime = false;
