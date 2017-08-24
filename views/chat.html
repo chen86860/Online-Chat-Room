@@ -116,7 +116,7 @@
     'use strict';
 
     var group_id = document.getElementById('group_id').value
-    var socket = io.connect('/' + group_id);
+    var socket = io('//118.31.112.250:3000').connect('/' + group_id);
     var timer = null;
     var isShowTime = false;
     var timerCount = 0;
@@ -518,7 +518,6 @@
           }, false);
         },
         getSelection: function getSelection(e) {
-          console.log(e);
           var sel = window.getSelection() || window.document.selection.createRange();
           var range = window.document.createRange();
           var el = e.target;
