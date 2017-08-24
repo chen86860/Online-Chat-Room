@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../chat/static/css/style.css">
   <link rel="stylesheet" type="text/css" href="../chat/static/css/iconfont.css">
   <script src="../chat/static/lib/jquery.min.js"></script>
-  <script src="//118.31.112.250:3000/chat/static/lib/socket.io.js"></script>
+  <script src="http://118.31.112.250:3000/chat/static/lib/socket.io.js"></script>
   <script src="../chat/static/lib/jweixin-1.2.0.js"></script>
   <script src="../chat/static/lib/inobounce.min.js"></script>
   <script src="../chat/static/lib/vue.min.js"></script>
@@ -116,7 +116,7 @@
     'use strict';
 
     var group_id = document.getElementById('group_id').value
-    var socket = io.connect('http://118.31.112.250:3000');
+    var socket = io.connect('http://118.31.112.250:3000' + '/' + group_id);
 
     var timer = null;
     var isShowTime = false;
