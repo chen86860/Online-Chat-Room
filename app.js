@@ -5,6 +5,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var nunjucks = require('nunjucks')
+const CONFIG_REDIS = require('./config/conf').redis
 
 var socket_io = require('socket.io')
 var io = socket_io({
@@ -13,8 +14,13 @@ var io = socket_io({
   ],
   upgrade: true,
   path: '/chat/socket.io'
+}).adapter({
+  host: CONFIG_REDIS.host,
+  port: CONFIG_REDIS.port,
+  password: CONFIG_REDIS.password,
 })
 
+var redis = require('socket.io-redis')
 var app = express();
 app.io = io;
 

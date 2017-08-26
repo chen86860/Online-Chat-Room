@@ -86,6 +86,7 @@ module.exports = function (io) {
 
   // 根据id创建聊天群
   let createRoom = (gid) => {
+
     io.of('/' + gid)
       .on("connection", client => {
         client.on("login", user => {
@@ -215,6 +216,9 @@ module.exports = function (io) {
       });
 
     // 无定时任务则创建
+    io.of('/' + gid).adapter.clients((err, clients) => {
+      log('CLIENT', clients)
+    })
     if (!(room.timed())) {
       room.add_timer(gid)
       log('msg', `***[${gid}] 定时任务已创建***`)
