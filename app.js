@@ -8,19 +8,20 @@ var nunjucks = require('nunjucks')
 const CONFIG_REDIS = require('./config/conf').redis
 
 var socket_io = require('socket.io')
+var redis_s = require('socket.io-redis')
+
 var io = socket_io({
   transports: [
     'websocket'
   ],
   upgrade: true,
   path: '/chat/socket.io'
-}).adapter({
+}).adapter(redis_s({
   host: CONFIG_REDIS.host,
   port: CONFIG_REDIS.port,
-  password: CONFIG_REDIS.password,
-})
+  // password: CONFIG_REDIS.password,
+}))
 
-var redis = require('socket.io-redis')
 var app = express();
 app.io = io;
 

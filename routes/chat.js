@@ -8,13 +8,13 @@ const log = require('../base/log').log
 
 let noop = () => { }
 
-var Room = function () {
+let Room = () => {
   var o = {
     room: {},
     timer: [],
   }
 
-  o.add = function (gid, id, client) {
+  o.add = (gid, id, client) => {
     if (Object.prototype.toString.apply(o.room[gid]) !== '[object Array]') {
       o.room[gid] = []
     }
@@ -24,23 +24,24 @@ var Room = function () {
     })
 
   }
-  o.del = function (gid, id) {
+  o.del = (gid, id) => {
+    if (!o.room[gid]) return
     let index = o.room[gid].findIndex(e => e.id === id)
     o.room[gid].splice(index, 1)
   }
-  o.existed = function (gid) {
+  o.existed = (gid) => {
     return !!(o.room[gid])
   }
-  o.add_timer = function (gid) {
+  o.add_timer = (gid) => {
     o.timer.push(gid)
   }
-  o.timed = function (gid) {
+  o.timed = (gid) => {
     return o.timer.includes(gid)
   }
 
   return o
 }
-var room = Room()
+let room = Room()
 
 module.exports = function (io) {
   router.get("/history/:group/:page/:size", (req, res) => {
@@ -86,15 +87,26 @@ module.exports = function (io) {
 
   // 根据id创建聊天群
   let createRoom = (gid) => {
+    // io.of('/').adapter.clients((err, clients) => {
+    //   log('CLIENT', clients)
+    // })
 
     io.of('/' + gid)
       .on("connection", client => {
+        client.join()
+
+        io.of('/' + gid).adapter.remoteJoin(client.id, 'room1', function (err) {
+          if (err) { console.log('unknown id') }
+          log('info', 'join success:' + client.id)
+        });
+
         client.on("login", user => {
           client.uid = user.id;
           client.uname = user.name;
           room.add(gid, user.id, client)
           log('info', user.name + ' 加入聊天室')
         });
+
         client.on("newMsg", data => {
           client.emit("serverMsg", data);
           client.broadcast.emit("serverMsg", data);
@@ -211,14 +223,14 @@ module.exports = function (io) {
 
         client.on("disconnect", function () {
           room.del(gid, client.uid)
+          io.of('/' + gid).adapter.remoteLeave(client.id, 'room1', function (err) {
+            if (err) { console.log('unknown id') }
+          });
           log('info', client.uname + " 离开聊天室");
         });
       });
 
     // 无定时任务则创建
-    io.of('/' + gid).adapter.clients((err, clients) => {
-      log('CLIENT', clients)
-    })
     if (!(room.timed())) {
       room.add_timer(gid)
       log('msg', `***[${gid}] 定时任务已创建***`)
@@ -235,9 +247,16 @@ module.exports = function (io) {
               res.id = 10000
               res.name = '定时发单机器人'
               res.time = new Date().getTime()
-              room.room[gid].forEach(e => {
-                e.client.emit('serverMsg', res)
-              })
+
+              io.of(gid).adapter.clients((err, clients) => {
+                log('INFO', 'CLIENTS' + clients);
+                io.of(gid).emit('serverMsg', res)
+              });
+
+              // room.room[gid].forEach(e => {
+              //   e.client.emit('serverMsg', res)
+              // })
+
               // client.broadcast.emit('serverMsg', res)
               // client.emit('serverMsg', res)
               log('info', `[${gid}]定时发单成功`)
@@ -282,17 +301,6 @@ module.exports = function (io) {
     }
   }
 
-  // 后台登录
-  // router.get('/login', (req, res) => {
-  //   res.render('login')
-  // })
-
-  // 管理界面
-  // router.get('/admin', (req, res) => {
-  //   res.render('admin', {
-  //     socketArr: socketArr
-  //   })
-  // })
   let formatTime = (val) => {
     if (isNaN(val)) return ''
     var prefix = (s) => s < 10 ? '0' + s : s
