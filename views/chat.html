@@ -12,10 +12,10 @@
   <meta http-equiv="Cache-control" content="max-age=129600" />
   <meta name="full-screen" content="yes">
   <meta name="x5-fullscreen" content="true">
-  <link rel="stylesheet" type="text/css" href="../chat/static/css/style.css">
-  <link rel="stylesheet" type="text/css" href="../chat/static/css/iconfont.css">
+  <link rel="stylesheet" href="../chat/static/css/style.css">
+  <link rel="stylesheet" href="../chat/static/css/iconfont.css">
   <script src="../chat/static/lib/jquery.min.js"></script>
-  <script src="http://118.31.112.250:3000/chat/static/lib/socket.io.js"></script>
+  <script src="../chat/static/lib/socket.io.js"></script>
   <script src="../chat/static/lib/jweixin-1.2.0.js"></script>
   <script src="../chat/static/lib/inobounce.min.js"></script>
   <script src="../chat/static/lib/vue.min.js"></script>
@@ -26,16 +26,6 @@
 <body>
   <div id="chat">
     <div class="chatBox">
-      <!-- <div class="chatBox-title">
-      <div class="chatBox-info">
-        <h3 class="chatBox-info-name">布谷鸟优惠推荐
-          <span id='count'>({{count}})</span>
-        </h3>
-      </div>
-      <div class="chatBox-switch">
-        <i class="iconfont icon-close" title="关闭"></i>
-      </div>
-    </div> -->
       <div class="chatBox-content" id="chatBox-content">
         <div :style="{display:pull==0?'none':'flex'}" class="refresh">
           <p>{{refresh.tip}}</p>
@@ -51,12 +41,13 @@
                   <div class="chatRoom-content">
                     <cite>
                       <span>
-                      {{item.name}}
+                        {{item.name}}
                       </span>
                     </cite>
                     <div :class="['chatRoom-user-text','chatId-'+item.id]" v-if='item.info' v-html='item.info' @click="getSelection"></div>
                   </div>
-                  <div class='chatRoom-user'><img :src='item.src' />
+                  <div class='chatRoom-user'>
+                    <img :src='item.src' />
                   </div>
                 </div>
               </template>
@@ -65,10 +56,12 @@
                   <i>{{item.time}}</i>
                 </div>
                 <div class="chatRoom-wrap">
-                  <div class='chatRoom-user'><img :src='item.src' /></div>
+                  <div class='chatRoom-user'>
+                    <img :src='item.src' />
+                  </div>
                   <div class="chatRoom-content">
                     <cite>
-                    <span>{{item.name}}</span>
+                      <span>{{item.name}}</span>
                     </cite>
                     <div :class="['chatRoom-user-text','chatId-'+item.id]" v-if='item.info' v-html='item.info' @click="getSelection"></div>
                     <div class="chatRoom-user-text chatRoom-img" v-if='item.img' @click="showPic(item)">
@@ -114,7 +107,7 @@
   <input type="hidden" name="" value="<%= avatar %>" id="avatar">
   <script>
     var group_id = document.getElementById('group_id').value
-    var socket = io('http://118.31.112.250:3000' + '/' + group_id, {
+    var socket = io('/' + group_id, {
       path: '/chat/socket.io'
     });
 
