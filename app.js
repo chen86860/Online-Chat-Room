@@ -13,7 +13,7 @@ var io = socket_io({
     'websocket'
   ],
   upgrade: true,
-  path: '/chat/socket.io'
+  // path: '/chat/socket.io'
 }).adapter({
   host: CONFIG_REDIS.host,
   port: CONFIG_REDIS.port,
