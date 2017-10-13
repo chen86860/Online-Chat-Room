@@ -14,10 +14,6 @@ var io = socket_io({
   ],
   upgrade: true,
   // path: '/chat/socket.io'
-}).adapter({
-  host: CONFIG_REDIS.host,
-  port: CONFIG_REDIS.port,
-  password: CONFIG_REDIS.password,
 })
 
 var redis = require('socket.io-redis')
